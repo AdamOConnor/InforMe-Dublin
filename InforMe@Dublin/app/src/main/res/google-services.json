@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "112287408321",
+    "firebase_url": "https://authentication-3439c.firebaseio.com",
+    "project_id": "authentication-3439c",
+    "storage_bucket": "authentication-3439c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:112287408321:android:e6c04824b13f8099",
+        "android_client_info": {
+          "package_name": "com.example.adamoconnor.authentication"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "112287408321-lu5gj7nmsqrr5ikir8g658stuvorecrs.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBYx8_8ZyQEILSScPu8aRSn2D9g_00hysk"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

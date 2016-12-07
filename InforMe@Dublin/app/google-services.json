@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1033201169929",
+    "firebase_url": "https://informelucan.firebaseio.com",
+    "project_id": "informelucan",
+    "storage_bucket": "informelucan.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1033201169929:android:0ebf5f0085320d93",
+        "android_client_info": {
+          "package_name": "com.example.adamoconnor.test02maps"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1033201169929-jfn3m2f5qk2eh5nkbairpg02qbkoe00u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5P0wPErDhqzFRMDwmZkPB-Pq-JShltaI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
