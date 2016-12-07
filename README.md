@@ -1,2 +1,2 @@
-# InforMe-Lucan
-Android Application on Hisorical place's in Lucan
+# InforMe-Dublin
+Android Application on Hisorical place's in different suburbs of dublin.
