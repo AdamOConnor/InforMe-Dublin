@@ -26,8 +26,6 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import android.support.annotation.NonNull;
 
-//import com.google.firebase.auth
-
 public class EmailPasswordAuthentication extends Progress implements
         View.OnClickListener {
 
@@ -74,10 +72,10 @@ public class EmailPasswordAuthentication extends Progress implements
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
                 FirebaseUser user = firebaseAuth.getCurrentUser();
                 if (user != null) {
-                    // User is signed in
+                    // Place is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
                 } else {
-                    // User is signed out
+                    // Place is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
                 }
                 // [START_EXCLUDE]

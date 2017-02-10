@@ -1,24 +1,38 @@
 package com.example.adamoconnor.test02maps;
 
 import android.Manifest;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.Geofence;
+import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -28,9 +42,19 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
+import com.google.android.gms.maps.model.Circle;
+import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.util.ArrayList;
+import java.util.Map;
 
 import static com.example.adamoconnor.test02maps.R.id.map;
 
@@ -38,21 +62,31 @@ public class MapsActivity extends AppCompatActivity
         implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
-        LocationListener {
+        LocationListener,
+        ResultCallback<Status> {
 
-    protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    /**
+     * Used to persist application state about whether geofences were added.
+     */
+
+    private static final String TAG = MapsActivity.class.getSimpleName();
     GoogleMap mGoogleMap;
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
-    GoogleApiClient mGoogleApiClient;
     Location mLastLocation;
     Marker mCurrLocationMarker;
 
+    protected ArrayList<Geofence> mGeofenceList;
+    protected GoogleApiClient mGoogleApiClient;
+    private Button mAddGeofencesButton;
+
+
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
+
+
 
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
@@ -60,8 +94,12 @@ public class MapsActivity extends AppCompatActivity
 
         isLocationOn();
 
+        // Empty list for storing geofences.
+        mGeofenceList = new ArrayList<Geofence>();
+
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(map);
         mapFrag.getMapAsync(this);
+
     }
 
     @Override
@@ -78,7 +116,7 @@ public class MapsActivity extends AppCompatActivity
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
 
-        ConnectivityManager cm = (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
         boolean network_enabled = activeNetwork != null &&
@@ -139,9 +177,8 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onMapReady(GoogleMap googleMap)
-    {
-        mGoogleMap=googleMap;
+    public void onMapReady(GoogleMap googleMap) {
+        mGoogleMap = googleMap;
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         //Initialize Google Play Services
@@ -152,8 +189,7 @@ public class MapsActivity extends AppCompatActivity
                 buildGoogleApiClient();
                 mGoogleMap.setMyLocationEnabled(true);
             }
-        }
-        else {
+        } else {
             buildGoogleApiClient();
             mGoogleMap.setMyLocationEnabled(true);
         }
@@ -182,14 +218,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
     @Override
-    public void onConnectionSuspended(int i) {}
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {}
-
-    @Override
-    public void onLocationChanged(Location location)
-    {
+    public void onLocationChanged(Location location) {
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -203,19 +232,39 @@ public class MapsActivity extends AppCompatActivity
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
-        //move map camera
-        //mGoogleMap.moveCamera(CameraUpdateFactory.newLatLng(latLng));
-        //mGoogleMap.setMinZoomPreference(6.0f);
-        //mGoogleMap.setMaxZoomPreference(25.0f);
+
+
+        for (Map.Entry<String, LatLng> entry : Constants.LANDMARKS.entrySet()) {
+
+            System.out.println(entry.getKey()+" longatitude"+entry.getValue().longitude+"\n latitude = "+entry.getValue().latitude);
+            CircleOptions circleOptions = new CircleOptions()
+                    .center(new LatLng(entry.getValue().latitude,entry.getValue().longitude))
+                    .strokeColor(Color.argb(50, 70,70,70))
+                    .fillColor( Color.argb(100, 150,150,150) )
+                    .radius(100);
+            mGoogleMap.addCircle( circleOptions );
+
+            mGeofenceList.add(new Geofence.Builder()
+                    .setRequestId(entry.getKey())
+                    .setCircularRegion(
+                            entry.getValue().latitude,
+                            entry.getValue().longitude,
+                            Constants.GEOFENCE_RADIUS_IN_METERS
+                    )
+                    .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+                    .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
+                            Geofence.GEOFENCE_TRANSITION_EXIT)
+                    .build());
+        }
+
+
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)      // Sets the center of the map to Mountain View
-                .zoom(17)                   // Sets the zoom
+                .zoom(20)                   // Sets the zoom
                 .bearing(90)                // Sets the orientation of the camera to east
                 .tilt(45)                   // Sets the tilt of the camera to 30 degrees
                 .build();                   // Creates a CameraPosition from the builder
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-        //
-        //mGoogleMap.animateCamera(CameraUpdateFactory.zoomTo(25));
 
         //stop location updates
         if (mGoogleApiClient != null) {
@@ -224,7 +273,8 @@ public class MapsActivity extends AppCompatActivity
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
-    public boolean checkLocationPermission(){
+
+    public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
@@ -291,5 +341,98 @@ public class MapsActivity extends AppCompatActivity
             // permissions this app might request
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate( R.menu.main_menu, menu );
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch ( item.getItemId() ) {
+            case R.id.geofence: {
+                informationActivity();
+                return true;
+            }
+            case R.id.clear: {
+                Populaye();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    protected void informationActivity () {
+
+        Intent in = new Intent(getApplicationContext(),Information.class);
+        startActivity(in);
+
+    }
+
+    protected void PopulateGeofences() {
+        if (!mGoogleApiClient.isConnected()) {
+            Toast.makeText(this, "Google API Client not connected!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        try {
+            LocationServices.GeofencingApi.addGeofences(
+                    mGoogleApiClient,
+                    getGeofencingRequest(),
+                    getGeofencePendingIntent()
+            ).setResultCallback(this); // Result processed in onResult().
+        } catch (SecurityException securityException) {
+            // Catch exception generated if the app does not use ACCESS_FINE_LOCATION permission.
+        }
+    }
+
+    /*
+     * Geofence methods
+     */
+
+    private GeofencingRequest getGeofencingRequest() {
+        GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
+        builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
+        builder.addGeofences(mGeofenceList);
+        return builder.build();
+    }
+    private PendingIntent getGeofencePendingIntent() {
+        Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
+        // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
+        return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
+
+    @Override
+    public void onConnectionFailed(ConnectionResult result) {
+        // Do something with result.getErrorCode());
+    }
+    @Override
+    public void onConnectionSuspended(int cause) {
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnecting() || mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    public void onResult(Status status)
+    {
+        if (status.isSuccess()) {
+            Toast.makeText(
+                    this,
+                    "Geofences Added",
+                    Toast.LENGTH_SHORT
+            ).show();
+        } else {
+            Toast.makeText(this,"No geo fence :(",Toast.LENGTH_SHORT).show();
+        }
+    }
+
 
 }

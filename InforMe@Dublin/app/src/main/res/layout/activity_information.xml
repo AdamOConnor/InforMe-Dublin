@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <com.daimajia.slider.library.SliderLayout
+        android:id="@+id/slider"
+        android:layout_width="fill_parent"
+        android:layout_height="220dp"
+        />
+
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" >
+
+        <android.support.v7.widget.Toolbar
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="?attr/colorPrimaryDark"
+            android:theme="?attr/actionBarTheme"
+            android:minHeight="?attr/actionBarSize"
+            android:id="@+id/toolbar" />
+
+        <TextView
+            android:text="Historic monument"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/title"
+            android:textSize="25sp"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:paddingLeft="10dp"
+            tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry" />
+
+        <ImageButton
+            android:layout_width="44dp"
+            android:layout_height="42dp"
+            android:id="@+id/informationListen"
+            android:elevation="0dp"
+            android:layout_marginLeft="310dp"
+            tools:ignore="ContentDescription,RtlHardcoded"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:layout_marginTop="7dp"
+            android:onClick="TextToSpeech" />
+
+    </android.support.v7.widget.CardView>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/informationText"
+        android:maxLines = "200"
+        android:scrollbars = "vertical"
+        android:textAlignment="textStart"
+        android:lineSpacingExtra="8sp"
+        android:fontFamily="halvetica"
+        android:paddingLeft="10dp"
+        android:paddingRight="10dp"
+        android:paddingEnd="10dp"
+        android:paddingStart="10dp"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp" />
+
+</LinearLayout>
