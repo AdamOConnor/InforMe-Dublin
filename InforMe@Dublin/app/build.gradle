@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "24.0.2"
+    buildToolsVersion '24.0.2'
     defaultConfig {
         applicationId "com.example.adamoconnor.test02maps"
         minSdkVersion 23
@@ -39,9 +39,7 @@ dependencies {
     compile 'com.google.android.gms:play-services:10.0.1'
     compile 'com.android.support:cardview-v7:23.4.0'
     compile 'com.google.firebase:firebase-storage:10.0.1'
-    testCompile 'junit:junit:4.12'
+
 }
-
-
 
 apply plugin: 'com.google.gms.google-services'
