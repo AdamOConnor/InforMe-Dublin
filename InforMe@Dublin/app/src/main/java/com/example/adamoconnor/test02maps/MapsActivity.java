@@ -18,6 +18,7 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -61,10 +62,12 @@ public class MapsActivity extends AppCompatActivity
 
     private static final String TAG = MapsActivity.class.getSimpleName();
     GoogleMap mGoogleMap;
+    boolean test = true;
     SupportMapFragment mapFrag;
     LocationRequest mLocationRequest;
     Location mLastLocation;
     Marker mCurrLocationMarker;
+    String notify;
 
     protected ArrayList<Geofence> mGeofenceList;
     protected GoogleApiClient mGoogleApiClient;
@@ -85,7 +88,7 @@ public class MapsActivity extends AppCompatActivity
         isLocationOn();
 
         // Empty list for storing geofences.
-        mGeofenceList = new ArrayList<Geofence>();
+        mGeofenceList = new ArrayList<>();
 
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(map);
         mapFrag.getMapAsync(this);
@@ -115,6 +118,7 @@ public class MapsActivity extends AppCompatActivity
         try {
             gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
         } catch (Exception ex) {
+            Log.d(TAG, "Gps enabled exception");
         }
 
         if (!gps_enabled) {
@@ -166,6 +170,24 @@ public class MapsActivity extends AppCompatActivity
         }
     }
 
+    public void displayOnScreen(String text) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
+        builder.setTitle("Monument Detected");
+        builder.setMessage("Do you want to view information on the monument area you have entered");
+        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // continue with delete
+            }
+        });
+        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int which) {
+                // do nothing
+            }
+        });
+        builder.setIcon(android.R.drawable.ic_dialog_alert);
+        final android.app.AlertDialog show = builder.show();
+    }
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -209,6 +231,7 @@ public class MapsActivity extends AppCompatActivity
 
     @Override
     public void onLocationChanged(Location location) {
+
         mLastLocation = location;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
@@ -260,6 +283,12 @@ public class MapsActivity extends AppCompatActivity
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
+
+        if(test) {
+            PopulateGeofences();
+            test = false;
+        }
+
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
@@ -347,7 +376,7 @@ public class MapsActivity extends AppCompatActivity
                 return true;
             }
             case R.id.clear: {
-                //Populate();
+                displayOnScreen("helo");
                 return true;
             }
         }
@@ -389,8 +418,11 @@ public class MapsActivity extends AppCompatActivity
         return builder.build();
     }
     private PendingIntent getGeofencePendingIntent() {
+
+        Log.d(TAG, "Geo fence pending intent");
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
+        displayOnScreen("hello");
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 

@@ -44,9 +44,6 @@ public class Place {
         this.name = name;
     }
 
-
-
-
     // Default constructor required for calls to
     // DataSnapshot.getValue(Place.class)
     public Place() {

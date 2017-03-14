@@ -1,11 +1,14 @@
 package com.example.adamoconnor.test02maps;
 
+import android.app.AlertDialog;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
+import android.app.admin.SystemUpdatePolicy;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
@@ -39,9 +42,11 @@ public class GeofenceTransitionsIntentService extends IntentService {
         }
         String description = getGeofenceTransitionDetails(event);
         showNotification(description);
+        //displayOnScreen(description);
     }
 
     private static String getGeofenceTransitionDetails(GeofencingEvent event) {
+
         String transitionString =
                 GeofenceStatusCodes.getStatusCodeString(event.getGeofenceTransition());
         List triggeringIDs = new ArrayList();
@@ -62,8 +67,11 @@ public class GeofenceTransitionsIntentService extends IntentService {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingNotificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        // 3. Create and send a notification
+        // 3. send to maps Activity to alert user on s
+
+        // 4. Create and send a notification
         Notification notification = new NotificationCompat.Builder(this)
+                .setColor(Color.GREEN)
                 .setSmallIcon(R.drawable.ic_action_location)
                 .setContentTitle(text)
                 .setContentText(text)
