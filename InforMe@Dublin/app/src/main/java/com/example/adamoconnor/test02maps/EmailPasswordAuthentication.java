@@ -107,7 +107,7 @@ public class EmailPasswordAuthentication extends Progress implements
 
                 for (DataSnapshot alert : alerts.getChildren()) {
                     String myLandmarks = alert.getValue().toString();
-                    String[] splited = myLandmarks.split("\\s+");
+                    String[] splited = myLandmarks.split("\\|");
 
                     LANDMARKS.put(splited[0], new LatLng(Double.parseDouble(splited[1]), Double.parseDouble(splited[2])));
                 }

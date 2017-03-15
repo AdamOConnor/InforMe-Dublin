@@ -246,11 +246,11 @@ public class MapsActivity extends Progress
 
         //Place current location marker
         LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-        MarkerOptions markerOptions = new MarkerOptions();
+        /*MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
+        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);*/
 
         for (Map.Entry<String, LatLng> entry : LANDMARKS.entrySet()) {
 
@@ -258,8 +258,16 @@ public class MapsActivity extends Progress
                     .center(new LatLng(entry.getValue().latitude,entry.getValue().longitude))
                     .strokeColor(Color.argb(50, 70,70,70))
                     .fillColor( Color.argb(100, 150,150,150) )
-                    .radius(100);
+                    .radius(50);
             mGoogleMap.addCircle( circleOptions );
+
+            //Place current location marker
+            LatLng geo = new LatLng(entry.getValue().latitude,entry.getValue().longitude);
+            MarkerOptions markerOptions = new MarkerOptions();
+            markerOptions.position(geo);
+            markerOptions.title(entry.getKey());
+            markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.informe));//BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)
+            mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
             mGeofenceList.add(new Geofence.Builder()
                     .setRequestId(entry.getKey())
@@ -274,9 +282,13 @@ public class MapsActivity extends Progress
                     .build());
         }
 
+        Location findme = mGoogleMap.getMyLocation();
+        double latitude = findme.getLatitude();
+        double longitude = findme.getLongitude();
+        LatLng mycoord = new LatLng(latitude, longitude);
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(latLng)      // Sets the center of the map to Mountain View
+                .target(mycoord)      // Sets the center of the map to Mountain View
                 .zoom(20)                   // Sets the zoom
                 .bearing(90)                // Sets the orientation of the camera to east
                 .tilt(45)                   // Sets the tilt of the camera to 30 degrees
@@ -415,6 +427,15 @@ public class MapsActivity extends Progress
      * Geofence methods
      */
 
+    public void getText(String text) {
+
+       // if(work != null) {
+            Log.d(TAG, "!!!!!!!!!!!!!!!!!!! "+text);
+       // }
+
+
+    }
+
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
@@ -426,8 +447,10 @@ public class MapsActivity extends Progress
         Log.d(TAG, "Geo fence pending intent");
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
-       //displayOnScreen("hello");
+
+        //displayOnScreen("hello");
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
     }
 
     @Override

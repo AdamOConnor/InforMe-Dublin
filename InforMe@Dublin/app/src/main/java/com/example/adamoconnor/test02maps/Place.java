@@ -15,6 +15,16 @@ import java.util.ArrayList;
 @IgnoreExtraProperties
 public class Place {
 
+
+    public String getTest() {
+        return test;
+    }
+
+    public void setTest(String test) {
+        this.test = test;
+    }
+
+    public String test;
     public String name;
     public String email;
     public Double latitude;

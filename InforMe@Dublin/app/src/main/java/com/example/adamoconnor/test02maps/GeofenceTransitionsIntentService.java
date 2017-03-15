@@ -7,6 +7,7 @@ import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
@@ -15,6 +16,7 @@ import android.util.Log;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
+import com.google.android.gms.location.places.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +50,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         for (Geofence geofence : event.getTriggeringGeofences()) {
             triggeringIDs.add(geofence.getRequestId());
         }
-        return String.format("%s: %s", transitionString, TextUtils.join(", ", triggeringIDs));
+        return String.format("%s| %s", transitionString, TextUtils.join(", ", triggeringIDs));
     }
 
     public void showNotification(String text) {
@@ -62,19 +64,27 @@ public class GeofenceTransitionsIntentService extends IntentService {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingNotificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+
+        String[] splited = text.split("\\|");
+        Place test = new Place();
+        test.setTest(splited[1]);
         // 3. send to maps Activity to alert user on s
 
         // 4. Create and send a notification
         Notification notification = new NotificationCompat.Builder(this)
-                .setColor(Color.GREEN)
-                .setSmallIcon(R.drawable.ic_action_location)
-                .setContentTitle(text)
-                .setContentText(text)
+                .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.informe))
+                .setSmallIcon(R.drawable.informe)
+                .setContentTitle("Historic Site Entered")
+                .setStyle(new NotificationCompat.BigTextStyle().bigText("Hey you have entered a site of historic significance - "+splited[1]))
                 .setContentIntent(pendingNotificationIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
+                .setDefaults(Notification.DEFAULT_SOUND)
                 .setAutoCancel(true)
                 .build();
         notificationManager.notify(0, notification);
+
+        MapsActivity hey = new MapsActivity();
+        hey.getText(text);
     }
 
     private void sendNotification(String notificationDetails) {
@@ -86,6 +96,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
         stackBuilder.addParentStack(MapsActivity.class).addNextIntent(notificationIntent);
         PendingIntent notificationPendingIntent =
                 stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
+
+
 
         // Get a notification builder that's compatible with platform versions >= 4
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);

@@ -15,6 +15,7 @@ public class Constants {
     public static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS = Geofence.NEVER_EXPIRE;
     public static final float GEOFENCE_RADIUS_IN_METERS = 150;
     public static final HashMap<String, LatLng> LANDMARKS = new HashMap<>();
+    public static String sharedValue = null;
 
 
 }
