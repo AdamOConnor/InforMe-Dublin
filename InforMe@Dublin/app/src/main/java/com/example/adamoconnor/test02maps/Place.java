@@ -16,7 +16,26 @@ import java.util.ArrayList;
 public class Place {
 
     public String name;
+    public String email;
+    public Double latitude;
+    public Double longitude;
+    public ArrayList<String> information;
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
     public String getEmail() {
         return email;
     }
@@ -24,9 +43,6 @@ public class Place {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public String email;
-    public ArrayList<String> information;
 
     public ArrayList<String> getInformation() {
         return information;

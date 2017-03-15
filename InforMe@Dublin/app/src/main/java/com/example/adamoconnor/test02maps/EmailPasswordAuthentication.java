@@ -19,12 +19,21 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
 import android.support.annotation.NonNull;
+
+import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
 
 public class EmailPasswordAuthentication extends Progress implements
         View.OnClickListener {
@@ -74,6 +83,7 @@ public class EmailPasswordAuthentication extends Progress implements
                 if (user != null) {
                     // Place is signed in
                     Log.d(TAG, "onAuthStateChanged:signed_in:" + user.getUid());
+
                 } else {
                     // Place is signed out
                     Log.d(TAG, "onAuthStateChanged:signed_out");
@@ -84,6 +94,30 @@ public class EmailPasswordAuthentication extends Progress implements
             }
         };
         // [END auth_state_listener]
+    }
+
+    public static void addGeofences() {
+
+        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        final DatabaseReference myRef = database.child("geofences").child("lucan");
+        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot alerts) {
+                Log.d(TAG, "put should have executed....");
+
+                for (DataSnapshot alert : alerts.getChildren()) {
+                    String myLandmarks = alert.getValue().toString();
+                    String[] splited = myLandmarks.split("\\s+");
+
+                    LANDMARKS.put(splited[0], new LatLng(Double.parseDouble(splited[1]), Double.parseDouble(splited[2])));
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void isInternetOn() {
@@ -252,6 +286,8 @@ public class EmailPasswordAuthentication extends Progress implements
         if (user != null) {
             mStatusTextView.setText(getString(R.string.emailpassword_status_fmt, user.getEmail()));
             mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
+
+            addGeofences();
 
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);

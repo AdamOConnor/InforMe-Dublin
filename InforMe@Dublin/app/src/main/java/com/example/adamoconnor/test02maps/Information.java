@@ -156,7 +156,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
             @Override
             public void onDataChange(DataSnapshot alerts) {
 
-                Hash_file_maps = new HashMap<String, String>();
+                Hash_file_maps = new HashMap<>();
 
                 int count = 1;
                 for(DataSnapshot alert : alerts.getChildren()) {

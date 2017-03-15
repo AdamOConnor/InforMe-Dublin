@@ -12,6 +12,8 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -43,13 +45,20 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
+import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
 import static com.example.adamoconnor.test02maps.R.id.map;
 
-public class MapsActivity extends AppCompatActivity
+public class MapsActivity extends Progress
         implements OnMapReadyCallback,
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
@@ -79,14 +88,11 @@ public class MapsActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
-
-
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
         isLocationOn();
-
         // Empty list for storing geofences.
         mGeofenceList = new ArrayList<>();
 
@@ -106,6 +112,7 @@ public class MapsActivity extends AppCompatActivity
     }
 
     private void isLocationOn() {
+
         LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         boolean gps_enabled = false;
 
@@ -245,11 +252,8 @@ public class MapsActivity extends AppCompatActivity
         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
         mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
+        for (Map.Entry<String, LatLng> entry : LANDMARKS.entrySet()) {
 
-
-        for (Map.Entry<String, LatLng> entry : Constants.LANDMARKS.entrySet()) {
-
-            System.out.println(entry.getKey()+" longatitude"+entry.getValue().longitude+"\n latitude = "+entry.getValue().latitude);
             CircleOptions circleOptions = new CircleOptions()
                     .center(new LatLng(entry.getValue().latitude,entry.getValue().longitude))
                     .strokeColor(Color.argb(50, 70,70,70))
@@ -376,7 +380,7 @@ public class MapsActivity extends AppCompatActivity
                 return true;
             }
             case R.id.clear: {
-                displayOnScreen("helo");
+                PopulateGeofences();
                 return true;
             }
         }
@@ -390,7 +394,7 @@ public class MapsActivity extends AppCompatActivity
 
     }
 
-    protected void PopulateGeofences() {
+    public void PopulateGeofences() {
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(this, "Google API Client not connected!", Toast.LENGTH_SHORT).show();
             return;
@@ -422,7 +426,7 @@ public class MapsActivity extends AppCompatActivity
         Log.d(TAG, "Geo fence pending intent");
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
-        displayOnScreen("hello");
+       //displayOnScreen("hello");
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
@@ -433,14 +437,6 @@ public class MapsActivity extends AppCompatActivity
     @Override
     public void onConnectionSuspended(int cause) {
         mGoogleApiClient.connect();
-    }
-
-    @Override
-    protected void onStop() {
-        super.onStop();
-        if (mGoogleApiClient.isConnecting() || mGoogleApiClient.isConnected()) {
-            mGoogleApiClient.disconnect();
-        }
     }
 
     public void onResult(Status status)

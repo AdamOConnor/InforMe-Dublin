@@ -1,16 +1,12 @@
 package com.example.adamoconnor.test02maps;
 
-import android.app.AlertDialog;
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TaskStackBuilder;
-import android.app.admin.SystemUpdatePolicy;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.graphics.BitmapFactory;
+import android.content.Intent;;
 import android.graphics.Color;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
@@ -42,7 +38,6 @@ public class GeofenceTransitionsIntentService extends IntentService {
         }
         String description = getGeofenceTransitionDetails(event);
         showNotification(description);
-        //displayOnScreen(description);
     }
 
     private static String getGeofenceTransitionDetails(GeofencingEvent event) {
