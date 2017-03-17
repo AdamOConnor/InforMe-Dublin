@@ -28,6 +28,7 @@ import java.util.Locale;
 
 public class Information extends Progress implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
+    private static final String TAG = Information.class.getSimpleName();
     private TextToSpeech repeatText;
     private Place monument;
     private TextView information;
@@ -35,16 +36,23 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
     private ImageButton listenButton;
     private SliderLayout sliderLayout;
     private HashMap<String,String> Hash_file_maps ;
-
-    private int[] IMAGE_IDS = {
-            R.drawable.esker01, R.drawable.esker02,R.drawable.esker03,
-            R.drawable.esker04
-    };
+    private String monumentName;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_information);
+
+        if (savedInstanceState == null) {
+            Bundle extras = getIntent().getExtras();
+            if(extras == null) {
+                monumentName= null;
+            } else {
+                monumentName= extras.getString("monumentInformation");
+            }
+        } else {
+            monumentName = (String) savedInstanceState.getSerializable("STRING_I_NEED");
+        }
 
         listenButton = (ImageButton)findViewById(R.id.informationListen);
         listenButton.setImageResource(R.drawable.soundicon);
@@ -128,7 +136,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 monument = new Place();
-                monument.setName(dataSnapshot.child("name").getValue().toString());
+               // monument name goes on this line
                 monument.setEmail(dataSnapshot.child("info").getValue().toString());
 
                 title.setText(monument.getName());
@@ -151,6 +159,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
     public void informationImages() {
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
+        // pass the name of the monument
         final DatabaseReference myRef = database.child("images").child(monument.getName());
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -160,6 +169,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
 
                 int count = 1;
                 for(DataSnapshot alert : alerts.getChildren()) {
+                    // pass the monument name
                     Hash_file_maps.put(monument.getName()+", "+count, alert.getValue().toString());
                     System.out.println(alert.getValue().toString());
                     count++;

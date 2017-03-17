@@ -9,15 +9,15 @@ import android.content.Context;
 import android.content.Intent;;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.os.CountDownTimer;
+import android.os.IBinder;
+import android.os.SystemClock;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
-import com.google.android.gms.location.places.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +27,7 @@ import java.util.List;
 
 public class GeofenceTransitionsIntentService extends IntentService {
     protected static final String TAG = "GeofenceTransitionsIS";
+    public static String description;
 
     public GeofenceTransitionsIntentService() {
         super(TAG);  // use TAG to name the IntentService worker thread
@@ -38,7 +39,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
         if (event.hasError()) {
             Log.e(TAG, "GeofencingEvent Error: " + event.getErrorCode());
         }
-        String description = getGeofenceTransitionDetails(event);
+        description = getGeofenceTransitionDetails(event);
+        //sendInformation(description);
         showNotification(description);
     }
 
@@ -53,7 +55,17 @@ public class GeofenceTransitionsIntentService extends IntentService {
         return String.format("%s| %s", transitionString, TextUtils.join(", ", triggeringIDs));
     }
 
+
+    private static void sendInformation(String info) {
+
+        final String[] splited = info.split("\\|");
+
+
+    }
+
     public void showNotification(String text) {
+
+        final String[] splited = text.split("\\|");
 
         // 1. Create a NotificationManager
         NotificationManager notificationManager =
@@ -64,13 +76,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
         PendingIntent pendingNotificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-
-        String[] splited = text.split("\\|");
-        Place test = new Place();
-        test.setTest(splited[1]);
-        // 3. send to maps Activity to alert user on s
-
-        // 4. Create and send a notification
+        // 3. Create and send a notification
         Notification notification = new NotificationCompat.Builder(this)
                 .setLargeIcon(BitmapFactory.decodeResource(this.getResources(), R.drawable.informe))
                 .setSmallIcon(R.drawable.informe)
@@ -83,35 +89,48 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 .build();
         notificationManager.notify(0, notification);
 
-        MapsActivity hey = new MapsActivity();
-        hey.getText(text);
     }
 
-    private void sendNotification(String notificationDetails) {
-        // Create an explicit content Intent that starts MainActivity.
-        Intent notificationIntent = new Intent(getApplicationContext(), MapsActivity.class);
+    final static String MY_ACTION = "MY_ACTION";
 
-        // Get a PendingIntent containing the entire back stack.
-        TaskStackBuilder stackBuilder = TaskStackBuilder.create(this);
-        stackBuilder.addParentStack(MapsActivity.class).addNextIntent(notificationIntent);
-        PendingIntent notificationPendingIntent =
-                stackBuilder.getPendingIntent(0, PendingIntent.FLAG_UPDATE_CURRENT);
-
-
-
-        // Get a notification builder that's compatible with platform versions >= 4
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
-
-        // Define the notification settings.
-        builder.setColor(Color.RED)
-                .setContentTitle(notificationDetails)
-                .setContentText("Click notification to return to App")
-                .setContentIntent(notificationPendingIntent)
-                .setAutoCancel(true);
-
-        // Fire and notify the built Notification.
-        NotificationManager notificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-        notificationManager.notify(0, builder.build());
+    @Override
+    public IBinder onBind(Intent arg0) {
+        // TODO Auto-generated method stub
+        return null;
     }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        // TODO Auto-generated method stub
+
+        MyThread myThread = new MyThread();
+        myThread.start();
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    public class MyThread extends Thread{
+
+        @Override
+        public void run() {
+            // TODO Auto-generated method stub
+           // for(int i=0; i<10; i++){
+                try {
+                    Thread.sleep(3000);
+                    String[] splited = description.split("\\|");
+                    Intent intent = new Intent();
+                    intent.setAction(MY_ACTION);
+                    intent.putExtra("DATAPASSED", splited[1]);
+
+                    sendBroadcast(intent);
+                } catch (InterruptedException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+           // }
+            stopSelf();
+        }
+
+        }
+
 }

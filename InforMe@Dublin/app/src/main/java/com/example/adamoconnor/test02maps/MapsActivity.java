@@ -2,16 +2,20 @@ package com.example.adamoconnor.test02maps;
 
 import android.Manifest;
 import android.app.PendingIntent;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.provider.Settings;
@@ -35,6 +39,7 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.places.*;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -54,9 +59,12 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
 import static com.example.adamoconnor.test02maps.R.id.map;
+import static java.security.AccessController.getContext;
 
 public class MapsActivity extends Progress
         implements OnMapReadyCallback,
@@ -76,7 +84,9 @@ public class MapsActivity extends Progress
     LocationRequest mLocationRequest;
     Location mLastLocation;
     Marker mCurrLocationMarker;
-    String notify;
+    String monument;
+    String HoldMonument = "";
+    myReceiver myReceiver;
 
     protected ArrayList<Geofence> mGeofenceList;
     protected GoogleApiClient mGoogleApiClient;
@@ -177,24 +187,6 @@ public class MapsActivity extends Progress
         }
     }
 
-    public void displayOnScreen(String text) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(this);
-        builder.setTitle("Monument Detected");
-        builder.setMessage("Do you want to view information on the monument area you have entered");
-        builder.setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // continue with delete
-            }
-        });
-        builder.setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-            public void onClick(DialogInterface dialog, int which) {
-                // do nothing
-            }
-        });
-        builder.setIcon(android.R.drawable.ic_dialog_alert);
-        final android.app.AlertDialog show = builder.show();
-    }
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mGoogleMap = googleMap;
@@ -282,13 +274,14 @@ public class MapsActivity extends Progress
                     .build());
         }
 
-        Location findme = mGoogleMap.getMyLocation();
+        /*Location findme = mGoogleMap.getMyLocation();
         double latitude = findme.getLatitude();
         double longitude = findme.getLongitude();
-        LatLng mycoord = new LatLng(latitude, longitude);
+        //test();
+        LatLng mycoord = new LatLng(latitude, longitude);*/
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(mycoord)      // Sets the center of the map to Mountain View
+                .target(latLng)      // Sets the center of the map to Mountain View
                 .zoom(20)                   // Sets the zoom
                 .bearing(90)                // Sets the orientation of the camera to east
                 .tilt(45)                   // Sets the tilt of the camera to 30 degrees
@@ -388,23 +381,17 @@ public class MapsActivity extends Progress
     public boolean onOptionsItemSelected(MenuItem item) {
         switch ( item.getItemId() ) {
             case R.id.geofence: {
-                informationActivity();
+                //informationActivity();
                 return true;
             }
             case R.id.clear: {
-                PopulateGeofences();
+                //PopulateGeofences();
                 return true;
             }
         }
         return super.onOptionsItemSelected(item);
     }
 
-    protected void informationActivity () {
-
-        Intent in = new Intent(getApplicationContext(),Information.class);
-        startActivity(in);
-
-    }
 
     public void PopulateGeofences() {
         if (!mGoogleApiClient.isConnected()) {
@@ -423,19 +410,6 @@ public class MapsActivity extends Progress
         }
     }
 
-    /*
-     * Geofence methods
-     */
-
-    public void getText(String text) {
-
-       // if(work != null) {
-            Log.d(TAG, "!!!!!!!!!!!!!!!!!!! "+text);
-       // }
-
-
-    }
-
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
@@ -443,14 +417,31 @@ public class MapsActivity extends Progress
         return builder.build();
     }
     private PendingIntent getGeofencePendingIntent() {
-
         Log.d(TAG, "Geo fence pending intent");
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
 
-        //displayOnScreen("hello");
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
+    }
+
+    @Override
+    protected void onStart() {
+        // TODO Auto-generated method stub
+
+        myReceiver = new myReceiver();
+        IntentFilter intentFilter = new IntentFilter();
+        intentFilter.addAction(GeofenceTransitionsIntentService.MY_ACTION);
+        registerReceiver(myReceiver, intentFilter);
+
+        super.onStart();
+    }
+
+    @Override
+    public void onStop() {
+        // TODO Auto-generated method stub
+        unregisterReceiver(myReceiver);
+        super.onStop();
     }
 
     @Override
@@ -476,4 +467,39 @@ public class MapsActivity extends Progress
     }
 
 
+    private class myReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context arg0, Intent arg1) {
+            // TODO Auto-generated method stub
+
+            final String datapassed = arg1.getStringExtra("DATAPASSED");
+
+            new AlertDialog.Builder(MapsActivity.this)
+                    .setTitle("Historic Monument")
+                    .setMessage("Do you want to view information on the monument area you have entered ? - "+datapassed)
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            Intent monumentInformationIntent = new Intent(getApplicationContext(),Information.class);
+                            monumentInformationIntent.putExtra("monumentInformation", datapassed);
+                            startActivity(monumentInformationIntent);
+
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(R.drawable.informe4)
+                    .show();
+
+        }
+
+    }
+
+
+
 }
+
