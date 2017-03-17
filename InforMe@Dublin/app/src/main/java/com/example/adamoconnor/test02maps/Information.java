@@ -134,10 +134,9 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
                 monument = new Place();
                // monument name goes on this line
-                monument.setEmail(dataSnapshot.child(monumentName).getValue().toString());
+                monument.setEmail(dataSnapshot.child(monumentName.trim()).getValue().toString());
 
                 title.setText(monumentName);
                 information.setMovementMethod(new ScrollingMovementMethod());
@@ -160,7 +159,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         // pass the name of the monument
-        final DatabaseReference myRef = database.child("images").child(monumentName);
+        final DatabaseReference myRef = database.child("images").child(monumentName.trim());
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot alerts) {

@@ -8,27 +8,21 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.os.CountDownTimer;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.widget.Button;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -39,7 +33,6 @@ import com.google.android.gms.location.GeofencingRequest;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.places.*;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -50,21 +43,10 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
-
 import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
 import static com.example.adamoconnor.test02maps.R.id.map;
-import static java.security.AccessController.getContext;
 
 public class MapsActivity extends Progress
         implements OnMapReadyCallback,
@@ -84,14 +66,9 @@ public class MapsActivity extends Progress
     LocationRequest mLocationRequest;
     Location mLastLocation;
     Marker mCurrLocationMarker;
-    String monument;
-    String HoldMonument = "";
     myReceiver myReceiver;
-
     protected ArrayList<Geofence> mGeofenceList;
     protected GoogleApiClient mGoogleApiClient;
-    private Button mAddGeofencesButton;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -218,7 +195,7 @@ public class MapsActivity extends Progress
     @Override
     public void onConnected(Bundle bundle) {
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(1000);
+        mLocationRequest.setInterval(5000);
         mLocationRequest.setFastestInterval(1000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
         if (ContextCompat.checkSelfPermission(this,
@@ -237,13 +214,32 @@ public class MapsActivity extends Progress
             mCurrLocationMarker.remove();
         }
 
-        //Place current location marker
+        double latitude = 0;
+        double longitude = 0;
+        try {
+            Location findMe = mGoogleMap.getMyLocation();
+            latitude = findMe.getLatitude();
+            longitude = findMe.getLongitude();
 
-        /*MarkerOptions markerOptions = new MarkerOptions();
-        markerOptions.position(latLng);
-        markerOptions.title("Current Position");
-        markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA));
-        mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);*/
+        }catch(NullPointerException ex) {
+            ex.getLocalizedMessage();
+        }finally {
+            if(latitude != 0 && longitude != 0) {
+                latLng = new LatLng(latitude, longitude);
+            }
+            else {
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            }
+        }
+
+        CameraPosition cameraPosition = new CameraPosition.Builder()
+                .target(latLng)      // Sets the center of the map to Mountain View
+                .zoom(20)                   // Sets the zoom
+                .bearing(90)                // Sets the orientation of the camera to east
+                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
+                .build();                   // Creates a CameraPosition from the builder
+        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
 
         for (Map.Entry<String, LatLng> entry : LANDMARKS.entrySet()) {
 
@@ -274,32 +270,6 @@ public class MapsActivity extends Progress
                             Geofence.GEOFENCE_TRANSITION_EXIT)
                     .build());
         }
-
-        double latitude = 0;
-        double longitude = 0;
-        try {
-            Location findme = mGoogleMap.getMyLocation();
-            latitude = findme.getLatitude();
-            longitude = findme.getLongitude();
-
-        }catch(NullPointerException ex) {
-            ex.getLocalizedMessage();
-        }finally {
-            if(latitude != 0 && longitude != 0) {
-                latLng = new LatLng(latitude, longitude);
-            }
-            else {
-                latLng = new LatLng(location.getLatitude(), location.getLongitude());
-            }
-        }
-
-        CameraPosition cameraPosition = new CameraPosition.Builder()
-                .target(latLng)      // Sets the center of the map to Mountain View
-                .zoom(20)                   // Sets the zoom
-                .bearing(90)                // Sets the orientation of the camera to east
-                .tilt(45)                   // Sets the tilt of the camera to 30 degrees
-                .build();                   // Creates a CameraPosition from the builder
-        mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
         //stop location updates
         if (mGoogleApiClient != null) {

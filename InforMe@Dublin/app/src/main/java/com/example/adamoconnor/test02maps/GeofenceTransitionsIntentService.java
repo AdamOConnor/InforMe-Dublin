@@ -40,6 +40,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
             Log.e(TAG, "GeofencingEvent Error: " + event.getErrorCode());
         }
         description = getGeofenceTransitionDetails(event);
+        SystemClock.sleep(4000);
         //sendInformation(description);
         showNotification(description);
     }
@@ -55,17 +56,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
         return String.format("%s| %s", transitionString, TextUtils.join(", ", triggeringIDs));
     }
 
-
-    private static void sendInformation(String info) {
-
-        final String[] splited = info.split("\\|");
-
-
-    }
-
     public void showNotification(String text) {
 
-        final String[] splited = text.split("\\|");
 
         // 1. Create a NotificationManager
         NotificationManager notificationManager =
@@ -73,8 +65,10 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         // 2. Create a PendingIntent for AllGeofencesActivity
         Intent intent = new Intent(this, MapsActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        PendingIntent pendingNotificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);//FLAG_UPDATE_CURRENT
+        PendingIntent pendingNotificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent. FLAG_UPDATE_CURRENT);
+
+        String[] splited = text.split("\\|");
 
         // 3. Create and send a notification
         Notification notification = new NotificationCompat.Builder(this)
@@ -89,25 +83,12 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 .build();
         notificationManager.notify(0, notification);
 
-    }
-
-    final static String MY_ACTION = "MY_ACTION";
-
-    @Override
-    public IBinder onBind(Intent arg0) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        // TODO Auto-generated method stub
-
         MyThread myThread = new MyThread();
         myThread.start();
 
-        return super.onStartCommand(intent, flags, startId);
     }
+
+    final static String MY_ACTION = "MY_ACTION";
 
     public class MyThread extends Thread{
 
@@ -115,18 +96,14 @@ public class GeofenceTransitionsIntentService extends IntentService {
         public void run() {
             // TODO Auto-generated method stub
            // for(int i=0; i<10; i++){
-                try {
-                    Thread.sleep(3000);
+              //  try {
                     String[] splited = description.split("\\|");
                     Intent intent = new Intent();
                     intent.setAction(MY_ACTION);
                     intent.putExtra("DATAPASSED", splited[1]);
 
                     sendBroadcast(intent);
-                } catch (InterruptedException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
+
            // }
             stopSelf();
         }
