@@ -185,7 +185,6 @@ public class EmailPasswordAuthentication extends Progress implements
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot alerts) {
-                Log.d(TAG, "put should have executed....");
 
                 for (DataSnapshot alert : alerts.getChildren()) {
                     String myLandmarks = alert.getValue().toString();

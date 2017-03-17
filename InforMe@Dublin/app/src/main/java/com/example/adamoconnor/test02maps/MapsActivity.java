@@ -232,12 +232,13 @@ public class MapsActivity extends Progress
     public void onLocationChanged(Location location) {
 
         mLastLocation = location;
+        LatLng latLng;
         if (mCurrLocationMarker != null) {
             mCurrLocationMarker.remove();
         }
 
         //Place current location marker
-        LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
         /*MarkerOptions markerOptions = new MarkerOptions();
         markerOptions.position(latLng);
         markerOptions.title("Current Position");
@@ -274,11 +275,23 @@ public class MapsActivity extends Progress
                     .build());
         }
 
-        /*Location findme = mGoogleMap.getMyLocation();
-        double latitude = findme.getLatitude();
-        double longitude = findme.getLongitude();
-        //test();
-        LatLng mycoord = new LatLng(latitude, longitude);*/
+        double latitude = 0;
+        double longitude = 0;
+        try {
+            Location findme = mGoogleMap.getMyLocation();
+            latitude = findme.getLatitude();
+            longitude = findme.getLongitude();
+
+        }catch(NullPointerException ex) {
+            ex.getLocalizedMessage();
+        }finally {
+            if(latitude != 0 && longitude != 0) {
+                latLng = new LatLng(latitude, longitude);
+            }
+            else {
+                latLng = new LatLng(location.getLatitude(), location.getLongitude());
+            }
+        }
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)      // Sets the center of the map to Mountain View
