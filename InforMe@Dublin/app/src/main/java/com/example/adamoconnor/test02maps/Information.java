@@ -137,9 +137,9 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
 
                 monument = new Place();
                // monument name goes on this line
-                monument.setEmail(dataSnapshot.child("info").getValue().toString());
+                monument.setEmail(dataSnapshot.child(monumentName).getValue().toString());
 
-                title.setText(monument.getName());
+                title.setText(monumentName);
                 information.setMovementMethod(new ScrollingMovementMethod());
                 String info = monument.getEmail();
                 String regex = "\\[|\\]";
@@ -160,7 +160,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         // pass the name of the monument
-        final DatabaseReference myRef = database.child("images").child(monument.getName());
+        final DatabaseReference myRef = database.child("images").child(monumentName);
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot alerts) {
@@ -170,7 +170,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
                 int count = 1;
                 for(DataSnapshot alert : alerts.getChildren()) {
                     // pass the monument name
-                    Hash_file_maps.put(monument.getName()+", "+count, alert.getValue().toString());
+                    Hash_file_maps.put(monumentName+", "+count, alert.getValue().toString());
                     System.out.println(alert.getValue().toString());
                     count++;
                 }

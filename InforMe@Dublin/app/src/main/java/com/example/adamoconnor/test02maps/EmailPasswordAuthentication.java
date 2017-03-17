@@ -4,13 +4,21 @@ package com.example.adamoconnor.test02maps;
  * Created by Adam O'Connor on 04/11/2016.
  */
 
+import android.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
@@ -32,6 +40,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
 import android.support.annotation.NonNull;
+
+import java.io.IOException;
+import java.util.List;
+import java.util.Locale;
 
 import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
 
@@ -96,10 +108,80 @@ public class EmailPasswordAuthentication extends Progress implements
         // [END auth_state_listener]
     }
 
-    public static void addGeofences() {
+    public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
+
+    public boolean checkLocationPermission() {
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                //TODO:
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+                //Prompt the user once explanation has been shown
+                //(just doing it here for now, note that with this code, no explanation is shown)
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+
+
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_LOCATION);
+            }
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    public Location getLocation() {
+
+        checkLocationPermission();
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        if (locationManager != null) {
+            Location lastKnownLocationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            if (lastKnownLocationGPS != null) {
+                return lastKnownLocationGPS;
+            } else {
+                Location loc =  locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
+                System.out.println("1::"+loc.getLongitude());//----getting null over here
+                System.out.println("2::"+loc.getLatitude());
+                return loc;
+            }
+        } else {
+            return null;
+        }
+    }
+
+    public void addGeofences() {
+
+
+        Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
+        List<Address> addresses = null;
+        String town = "Blanchardstown";
+        try {
+            addresses = gcd.getFromLocation(getLocation().getLatitude(), getLocation().getLongitude(), 1);
+        }catch (IOException ex) {
+            ex.getStackTrace();
+        }
+
+        if (addresses.size() > 0)
+        {
+            town = addresses.get(0).getLocality();
+
+        }
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
-        final DatabaseReference myRef = database.child("geofences").child("lucan");
+        final DatabaseReference myRef = database.child("geofences").child(town.toLowerCase());
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot alerts) {
