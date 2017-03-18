@@ -62,13 +62,14 @@ public class GeofenceTransitionsIntentService extends IntentService {
         // 1. Create a NotificationManager
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
-
+        String[] splited = text.split("\\|");
         // 2. Create a PendingIntent for AllGeofencesActivity
         Intent intent = new Intent(this, MapsActivity.class);
+        intent.putExtra("1", splited[1]);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);//FLAG_UPDATE_CURRENT
         PendingIntent pendingNotificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent. FLAG_UPDATE_CURRENT);
 
-        String[] splited = text.split("\\|");
+
 
         // 3. Create and send a notification
         Notification notification = new NotificationCompat.Builder(this)
@@ -85,10 +86,10 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         MyThread myThread = new MyThread();
         myThread.start();
-
     }
 
     final static String MY_ACTION = "MY_ACTION";
+    final static String INFORMATION_ACTION = "INFORMATION_ACTION";
 
     public class MyThread extends Thread{
 
@@ -108,6 +109,8 @@ public class GeofenceTransitionsIntentService extends IntentService {
             stopSelf();
         }
 
-        }
+
+
+    }
 
 }

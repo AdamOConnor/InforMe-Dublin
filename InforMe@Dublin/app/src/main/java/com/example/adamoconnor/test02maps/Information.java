@@ -1,7 +1,13 @@
 package com.example.adamoconnor.test02maps;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.support.v7.app.AlertDialog;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
@@ -36,22 +42,22 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
     private ImageButton listenButton;
     private SliderLayout sliderLayout;
     private HashMap<String,String> Hash_file_maps ;
-    private String monumentName;
+    private String monumentName = null;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_information);
-
+        Bundle extras = null;
         if (savedInstanceState == null) {
-            Bundle extras = getIntent().getExtras();
+            extras = getIntent().getExtras();
             if(extras == null) {
                 monumentName= null;
             } else {
-                monumentName= extras.getString("monumentInformation");
+                monumentName = extras.getString("1");
             }
         } else {
-            monumentName = (String) savedInstanceState.getSerializable("STRING_I_NEED");
+            monumentName = extras.getString("monumentInformation");
         }
 
         listenButton = (ImageButton)findViewById(R.id.informationListen);
@@ -90,10 +96,10 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
         // TODO Auto-generated method stub
 
         if(repeatText != null){
-
             repeatText.stop();
             repeatText.shutdown();
         }
+        finish();
         super.onPause();
     }
 
@@ -136,6 +142,8 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
             public void onDataChange(DataSnapshot dataSnapshot) {
                 monument = new Place();
                // monument name goes on this line
+
+                //"Lucan Bridge"monumentName.trim()
                 monument.setEmail(dataSnapshot.child(monumentName.trim()).getValue().toString());
 
                 title.setText(monumentName);
@@ -169,8 +177,8 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
                 int count = 1;
                 for(DataSnapshot alert : alerts.getChildren()) {
                     // pass the monument name
-                    Hash_file_maps.put(monumentName+", "+count, alert.getValue().toString());
-                    System.out.println(alert.getValue().toString());
+                    Hash_file_maps.put(monumentName.trim()+", "+count, alert.getValue().toString());
+
                     count++;
                 }
 
@@ -192,7 +200,6 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
                 sliderLayout.setCustomAnimation(new DescriptionAnimation());
                 sliderLayout.setDuration(3000);
                 sliderLayout.addOnPageChangeListener(Information.this);
-
 
             }
 
@@ -224,4 +231,6 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
 
     @Override
     public void onPageScrollStateChanged(int state) {}
+
+
 }
