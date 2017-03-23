@@ -55,6 +55,9 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
                 monumentName= null;
             } else {
                 monumentName = extras.getString("1");
+                if(monumentName == null) {
+                    monumentName = extras.getString("monumentInformation");
+                }
             }
         } else {
             monumentName = extras.getString("monumentInformation");

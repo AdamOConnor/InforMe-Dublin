@@ -207,21 +207,21 @@ public class MapsActivity extends Progress
 
         double latitude = 0;
         double longitude = 0;
-      //  try {
+        try {
             Location findMe = mGoogleMap.getMyLocation();
             latitude = findMe.getLatitude();
             longitude = findMe.getLongitude();
 
-       // }catch(NullPointerException ex) {
-        //    ex.getLocalizedMessage();
-        //}finally {
-            //if(latitude != 0 && longitude != 0) {
+        }catch(NullPointerException ex) {
+            ex.getLocalizedMessage();
+        }finally {
+            if(latitude != 0 && longitude != 0) {
                 latLng = new LatLng(latitude, longitude);
-           // }
-           /* else {
+            }
+            else {
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
             }
-        }*/
+        }
 
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)      // Sets the center of the map to Mountain View
