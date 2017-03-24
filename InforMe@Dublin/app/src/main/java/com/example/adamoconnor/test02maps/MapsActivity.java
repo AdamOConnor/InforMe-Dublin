@@ -344,29 +344,6 @@ public class MapsActivity extends Progress
         }
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate( R.menu.main_menu, menu );
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch ( item.getItemId() ) {
-            case R.id.geofence: {
-                //informationActivity();
-                return true;
-            }
-            case R.id.clear: {
-                //PopulateGeofences();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
     public void PopulateGeofences() {
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(this, "Google API Client not connected!", Toast.LENGTH_SHORT).show();

@@ -22,6 +22,9 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -179,7 +182,7 @@ public class EmailPasswordAuthentication extends Progress implements
             town = addresses.get(0).getLocality();
 
         }
-
+        Log.d(TAG ,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+addresses.get(0).getLocality());
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         final DatabaseReference myRef = database.child("geofences").child(town.toLowerCase());
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -199,6 +202,28 @@ public class EmailPasswordAuthentication extends Progress implements
             }
         });
 
+    }
+
+    // creating an options menu for settings page
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch ( item.getItemId() ) {
+            case R.id.geofence: {
+                //informationActivity();
+                return true;
+            }
+            case R.id.clear: {
+                //PopulateGeofences();
+                return true;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate( R.menu.main_menu, menu );
+        return true;
     }
 
     private void isInternetOn() {

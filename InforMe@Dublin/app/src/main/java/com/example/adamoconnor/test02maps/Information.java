@@ -60,7 +60,12 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
                 }
             }
         } else {
-            monumentName = extras.getString("monumentInformation");
+            try {
+                monumentName = extras.getString("monumentInformation");
+            }catch(NullPointerException ex) {
+
+            }
+
         }
 
         listenButton = (ImageButton)findViewById(R.id.informationListen);
