@@ -208,7 +208,8 @@ public class EmailPasswordAuthentication extends Progress implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch ( item.getItemId() ) {
             case R.id.geofence: {
-                //informationActivity();
+                Intent i = new Intent(this, MyPreferenceActivity.class);
+                startActivity(i);
                 return true;
             }
             case R.id.clear: {

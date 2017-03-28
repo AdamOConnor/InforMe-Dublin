@@ -64,6 +64,8 @@
     <string name="action_save">action_save</string>
     <string name="email">email</string>
     <string name="name">name</string>
+    <string name="battery_saver">Battery Saver</string>
+    <string name="switch">Switch</string>
 
 
     <item name="userDatabase" type="id">Database</item>

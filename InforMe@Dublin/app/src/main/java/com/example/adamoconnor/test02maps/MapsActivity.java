@@ -9,6 +9,10 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -54,7 +58,8 @@ public class MapsActivity extends Progress
         GoogleApiClient.ConnectionCallbacks,
         GoogleApiClient.OnConnectionFailedListener,
         LocationListener,
-        ResultCallback<Status> {
+        ResultCallback<Status>,
+        SensorEventListener {
 
     /**
      * Used to persist application state about whether geofences were added.
@@ -70,6 +75,9 @@ public class MapsActivity extends Progress
     myReceiver myReceiver;
     protected ArrayList<Geofence> mGeofenceList;
     protected GoogleApiClient mGoogleApiClient;
+    private SensorManager mSensorManager;
+    private Sensor mProximity;
+    private static final int SENSOR_SENSITIVITY = 4;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,6 +90,10 @@ public class MapsActivity extends Progress
 
         isLocationOn();
         // Empty list for storing geofences.
+
+        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+
         mGeofenceList = new ArrayList<>();
 
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(map);
@@ -391,7 +403,7 @@ public class MapsActivity extends Progress
     @Override
     public void onResume() {
         super.onResume();
-
+        mSensorManager.registerListener(this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
     }
 
     @Override
@@ -399,9 +411,27 @@ public class MapsActivity extends Progress
         super.onPause();
 
         //stop location updates when Activity is no longer active
+        mSensorManager.unregisterListener(this);
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
+    }
+
+    public void onSensorChanged(SensorEvent event) {
+        if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
+            if (event.values[0] >= -SENSOR_SENSITIVITY && event.values[0] <= SENSOR_SENSITIVITY) {
+                //near
+                Toast.makeText(getApplicationContext(), "near", Toast.LENGTH_SHORT).show();
+            } else {
+                //far
+                Toast.makeText(getApplicationContext(), "far", Toast.LENGTH_SHORT).show();
+            }
+        }
+    }
+
+    @Override
+    public void onAccuracyChanged(Sensor sensor, int accuracy) {
+
     }
 
     @Override
