@@ -1,0 +1,10 @@
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <SwitchPreference
+        android:id="@+id/myswitch"
+        android:defaultValue="true"
+        android:key="battery_switch"
+        android:summary="Battery saver is used for saving the battery life of the handheld device."
+        android:title="Battery Saver" />
+
+</PreferenceScreen>

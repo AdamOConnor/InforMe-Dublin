@@ -32,7 +32,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/batteryImage"
-        android:layout_alignStart="@+id/textView2"
-        android:text="@string/switch" />
+        android:layout_alignStart="@+id/textView2" />
 
 </RelativeLayout>

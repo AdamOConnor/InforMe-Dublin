@@ -4,20 +4,20 @@ import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
-import android.app.TaskStackBuilder;
 import android.content.Context;
 import android.content.Intent;;
+import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
-import android.graphics.Color;
-import android.os.CountDownTimer;
-import android.os.IBinder;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
+
+import android.net.Uri;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -57,6 +57,16 @@ public class GeofenceTransitionsIntentService extends IntentService {
     }
 
     public void showNotification(String text) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String test = null;
+        Uri notificationSound;
+        int vibrationSet;
+        notificationSound = Uri.parse(preferences.getString("notifications_new_message_ringtone",test));
+        if(preferences.getBoolean("notifications_new_message_vibrate",true) == true) {
+            vibrationSet = Notification.DEFAULT_VIBRATE;
+        }else {
+            vibrationSet = 0;
+        }
 
 
         // 1. Create a NotificationManager
@@ -79,9 +89,11 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 .setStyle(new NotificationCompat.BigTextStyle().bigText("Hey you have entered a site of historic significance - "+splited[1]))
                 .setContentIntent(pendingNotificationIntent)
                 .setPriority(NotificationCompat.PRIORITY_HIGH)
-                .setDefaults(Notification.DEFAULT_SOUND)
+                .setSound(notificationSound)
+                .setDefaults(vibrationSet)
                 .setAutoCancel(true)
                 .build();
+
         notificationManager.notify(0, notification);
 
         MyThread myThread = new MyThread();

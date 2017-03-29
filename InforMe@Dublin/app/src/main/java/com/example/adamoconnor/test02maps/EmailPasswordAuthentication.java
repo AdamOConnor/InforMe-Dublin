@@ -206,24 +206,18 @@ public class EmailPasswordAuthentication extends Progress implements
 
     // creating an options menu for settings page
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch ( item.getItemId() ) {
-            case R.id.geofence: {
-                Intent i = new Intent(this, MyPreferenceActivity.class);
-                startActivity(i);
+
+                Intent intent = new Intent(this,SettingsActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
                 return true;
-            }
-            case R.id.clear: {
-                //PopulateGeofences();
-                return true;
-            }
-        }
-        return super.onOptionsItemSelected(item);
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate( R.menu.main_menu, menu );
+        inflater.inflate( R.menu.settings, menu );
         return true;
     }
 

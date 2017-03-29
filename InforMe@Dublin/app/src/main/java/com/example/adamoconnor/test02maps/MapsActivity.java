@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.hardware.Sensor;
@@ -19,6 +20,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.SystemClock;
+import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -28,6 +30,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.WindowManager;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -91,8 +94,13 @@ public class MapsActivity extends Progress
         isLocationOn();
         // Empty list for storing geofences.
 
-        mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
-        mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+
+        if(preferences.getBoolean("battery_switch",true) == true) {
+
+            mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+            mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        }
 
         mGeofenceList = new ArrayList<>();
 
@@ -403,7 +411,12 @@ public class MapsActivity extends Progress
     @Override
     public void onResume() {
         super.onResume();
-        mSensorManager.registerListener(this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
+        try {
+            mSensorManager.registerListener(this, mProximity, SensorManager.SENSOR_DELAY_NORMAL);
+        }catch (NullPointerException ex) {
+
+        }
+
     }
 
     @Override
@@ -411,7 +424,12 @@ public class MapsActivity extends Progress
         super.onPause();
 
         //stop location updates when Activity is no longer active
-        mSensorManager.unregisterListener(this);
+        try {
+            mSensorManager.unregisterListener(this);
+        }catch(NullPointerException ex) {
+
+        }
+
         if (mGoogleApiClient != null) {
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
@@ -421,10 +439,14 @@ public class MapsActivity extends Progress
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
             if (event.values[0] >= -SENSOR_SENSITIVITY && event.values[0] <= SENSOR_SENSITIVITY) {
                 //near
-                Toast.makeText(getApplicationContext(), "near", Toast.LENGTH_SHORT).show();
+                WindowManager.LayoutParams layout = getWindow().getAttributes();
+                layout.screenBrightness = 0F;
+                getWindow().setAttributes(layout);
             } else {
                 //far
-                Toast.makeText(getApplicationContext(), "far", Toast.LENGTH_SHORT).show();
+                WindowManager.LayoutParams layout = getWindow().getAttributes();
+                layout.screenBrightness = 1F;
+                getWindow().setAttributes(layout);
             }
         }
     }
