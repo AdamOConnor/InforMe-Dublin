@@ -209,31 +209,52 @@ public class EmailPasswordAuthentication extends Progress implements
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String emailAddress = String.valueOf(mEmailField.getText());
+        android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches();
 
-        auth.sendPasswordResetEmail(emailAddress)
-                .addOnCompleteListener(new OnCompleteListener<Void>() {
-                    @Override
-                    public void onComplete(@NonNull Task<Void> task) {
-                        if (task.isSuccessful()) {
-                            new AlertDialog.Builder(EmailPasswordAuthentication.this)
-                                    .setTitle("Password Reset")
-                                    .setMessage("An Email has been sent to the originating email address on which you have chosen\n Thank you !!")
-                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
+        if(emailAddress != null && android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
+            auth.sendPasswordResetEmail(emailAddress)
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (task.isSuccessful()) {
+                                new AlertDialog.Builder(EmailPasswordAuthentication.this)
+                                        .setTitle("Password Reset")
+                                        .setMessage("An Email has been sent to the originating email address on which you have chosen\n Thank you !!")
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
 
 
-                                        }
-                                    })
-                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                            // do nothing
-                                        }
-                                    })
-                                    .setIcon(R.drawable.informe4)
-                                    .show();
+                                            }
+                                        })
+                                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // do nothing
+                                            }
+                                        })
+                                        .setIcon(R.drawable.informe4)
+                                        .show();
+                            }
                         }
-                    }
-                });
+                    });
+        }
+        else {
+            new AlertDialog.Builder(EmailPasswordAuthentication.this)
+                    .setTitle("Not a valid Email Address")
+                    .setMessage("Please enter a valid email address")
+                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+
+
+                        }
+                    })
+                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            // do nothing
+                        }
+                    })
+                    .setIcon(R.drawable.informe4)
+                    .show();
+        }
     }
 
     // creating an options menu for settings page
