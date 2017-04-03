@@ -4,7 +4,6 @@ package com.example.adamoconnor.test02maps;
  * Created by Adam O'Connor on 04/11/2016.
  */
 
-import android.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -206,7 +205,7 @@ public class EmailPasswordAuthentication extends Progress implements
 
     }
 
-    public void forgotenPassword() {
+    public void forgottenPassword() {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
         String emailAddress = String.valueOf(mEmailField.getText());
@@ -216,7 +215,22 @@ public class EmailPasswordAuthentication extends Progress implements
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
-                            Log.d(TAG, "Email sent.");
+                            new AlertDialog.Builder(EmailPasswordAuthentication.this)
+                                    .setTitle("Password Reset")
+                                    .setMessage("An Email has been sent to the originating email address on which you have chosen\n Thank you !!")
+                                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+
+
+                                        }
+                                    })
+                                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+                                            // do nothing
+                                        }
+                                    })
+                                    .setIcon(R.drawable.informe4)
+                                    .show();
                         }
                     }
                 });
@@ -449,7 +463,7 @@ public class EmailPasswordAuthentication extends Progress implements
         } else if (i == R.id.sign_out_button) {
             signOut();
         } else if(i == R.id.forgotPassword) {
-            forgotenPassword();
+            forgottenPassword();
         }
         else if (i == R.id.to_map_button) {
             myMap();
