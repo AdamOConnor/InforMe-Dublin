@@ -16,7 +16,7 @@
     <string name="disconnect">Disconnect</string>
     <string name="loading">Loading…</string>
     <string name="custom_token">Custom Token</string>
-    <string name="signed_out">Signed Out</string>
+    <string name="signed_out">Please Sign in</string>
     <string name="token_null">Token: null</string>
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>

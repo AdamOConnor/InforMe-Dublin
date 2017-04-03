@@ -59,6 +59,8 @@ public class EmailPasswordAuthentication extends Progress implements
     private TextView mDetailTextView;
     private EditText mEmailField;
     private EditText mPasswordField;
+    private String mState = null; // setting state
+
 
     // [START declare_auth]
     private FirebaseAuth mAuth;
@@ -85,6 +87,7 @@ public class EmailPasswordAuthentication extends Progress implements
         findViewById(R.id.email_create_account_button).setOnClickListener(this);
         findViewById(R.id.sign_out_button).setOnClickListener(this);
         findViewById(R.id.to_map_button).setOnClickListener(this);
+        findViewById(R.id.forgotPassword).setOnClickListener(this);
 
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
@@ -156,8 +159,7 @@ public class EmailPasswordAuthentication extends Progress implements
                 return lastKnownLocationGPS;
             } else {
                 Location loc =  locationManager.getLastKnownLocation(LocationManager.PASSIVE_PROVIDER);
-                System.out.println("1::"+loc.getLongitude());//----getting null over here
-                System.out.println("2::"+loc.getLatitude());
+
                 return loc;
             }
         } else {
@@ -170,7 +172,7 @@ public class EmailPasswordAuthentication extends Progress implements
 
         Geocoder gcd = new Geocoder(getApplicationContext(), Locale.getDefault());
         List<Address> addresses = null;
-        String town = "Blanchardstown";
+        String town = "Dublin";
         try {
             addresses = gcd.getFromLocation(getLocation().getLatitude(), getLocation().getLongitude(), 1);
         }catch (IOException ex) {
@@ -182,7 +184,7 @@ public class EmailPasswordAuthentication extends Progress implements
             town = addresses.get(0).getLocality();
 
         }
-        Log.d(TAG ,"!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"+addresses.get(0).getLocality());
+
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         final DatabaseReference myRef = database.child("geofences").child(town.toLowerCase());
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -204,22 +206,44 @@ public class EmailPasswordAuthentication extends Progress implements
 
     }
 
+    public void forgotenPassword() {
+
+        FirebaseAuth auth = FirebaseAuth.getInstance();
+        String emailAddress = String.valueOf(mEmailField.getText());
+
+        auth.sendPasswordResetEmail(emailAddress)
+                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            Log.d(TAG, "Email sent.");
+                        }
+                    }
+                });
+    }
+
     // creating an options menu for settings page
     public boolean onOptionsItemSelected(MenuItem item) {
 
-                Intent intent = new Intent(this,SettingsActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);
-                return true;
-
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate( R.menu.settings, menu );
+        Intent intent = new Intent(this,SettingsActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
         return true;
     }
+
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.settings, menu);
+
+        if (mState == "HIDE_MENU")
+        {
+            for (int i = 0; i < menu.size(); i++)
+                menu.getItem(i).setVisible(false);
+        }
+        return true;
+    }
+
 
     private void isInternetOn() {
 
@@ -293,7 +317,8 @@ public class EmailPasswordAuthentication extends Progress implements
                         Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
 
                         if(task.isSuccessful()) {
-                            myMap();
+                            Toast.makeText(EmailPasswordAuthentication.this, "Authentication successful",
+                                    Toast.LENGTH_SHORT).show();
                         }
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
@@ -327,7 +352,8 @@ public class EmailPasswordAuthentication extends Progress implements
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
                         if(task.isSuccessful()) {
-                           myMap();
+                            Toast.makeText(EmailPasswordAuthentication.this, "Authentication successful",
+                                    Toast.LENGTH_SHORT).show();
                         }
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
@@ -389,17 +415,25 @@ public class EmailPasswordAuthentication extends Progress implements
             mDetailTextView.setText(getString(R.string.firebase_status_fmt, user.getUid()));
 
             addGeofences();
+            mState = "show";
+            invalidateOptionsMenu();
 
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
             findViewById(R.id.email_password_fields).setVisibility(View.GONE);
+            findViewById(R.id.forgotPassword).setVisibility(View.GONE);
             findViewById(R.id.sign_out_button).setVisibility(View.VISIBLE);
             findViewById(R.id.to_map_button).setVisibility(View.VISIBLE);
+
         } else {
             mStatusTextView.setText(R.string.signed_out);
             mDetailTextView.setText(null);
 
+            mState = "HIDE_MENU";
+            invalidateOptionsMenu();
+
             findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);
             findViewById(R.id.email_password_fields).setVisibility(View.VISIBLE);
+            findViewById(R.id.forgotPassword).setVisibility(View.VISIBLE);
             findViewById(R.id.sign_out_button).setVisibility(View.GONE);
             findViewById(R.id.to_map_button).setVisibility(View.GONE);
         }
@@ -414,6 +448,8 @@ public class EmailPasswordAuthentication extends Progress implements
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
         } else if (i == R.id.sign_out_button) {
             signOut();
+        } else if(i == R.id.forgotPassword) {
+            forgotenPassword();
         }
         else if (i == R.id.to_map_button) {
             myMap();

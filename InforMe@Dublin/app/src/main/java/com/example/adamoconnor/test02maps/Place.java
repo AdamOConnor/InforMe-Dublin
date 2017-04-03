@@ -7,11 +7,6 @@ import com.google.firebase.database.IgnoreExtraProperties;
 
 import java.util.ArrayList;
 
-/**
- * Created by Ravi Tamada on 07/10/16.
- * www.androidhive.info
- */
-
 @IgnoreExtraProperties
 public class Place {
 
@@ -27,39 +22,14 @@ public class Place {
     public String test;
     public String name;
     public String email;
-    public Double latitude;
-    public Double longitude;
-    public ArrayList<String> information;
 
-    public Double getLatitude() {
-        return latitude;
-    }
 
-    public void setLatitude(Double latitude) {
-        this.latitude = latitude;
-    }
-
-    public Double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(Double longitude) {
-        this.longitude = longitude;
-    }
     public String getEmail() {
         return email;
     }
 
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public ArrayList<String> getInformation() {
-        return information;
-    }
-
-    public void setInformation(ArrayList<String> information) {
-        this.information = information;
     }
 
     public String getName() {

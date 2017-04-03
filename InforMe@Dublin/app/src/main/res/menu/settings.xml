@@ -2,15 +2,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <item
-        android:id="@+id/action_refresh"
-        android:orderInCategory="100"
-        android:showAsAction="always"
-        android:icon="@drawable/cast_ic_expanded_controller_play"
-        android:title="Refresh"/>
-
-    <item
         android:id="@+id/action_settings"
-        android:title="Settings">
-    </item>
+        android:title="Settings"/>
 
 </menu>

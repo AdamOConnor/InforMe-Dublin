@@ -14,6 +14,8 @@ import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.bluejamesbond.text.DocumentView;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
@@ -36,8 +38,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
 
     private static final String TAG = Information.class.getSimpleName();
     private TextToSpeech repeatText;
-    private Place monument;
-    private TextView information;
+    private DocumentView information;
     private TextView title;
     private ImageButton listenButton;
     private SliderLayout sliderLayout;
@@ -70,7 +71,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
 
         listenButton = (ImageButton)findViewById(R.id.informationListen);
         listenButton.setImageResource(R.drawable.soundicon);
-        information = (TextView)findViewById(R.id.informationText);
+        information = (DocumentView)findViewById(R.id.informationText);
         title = (TextView)findViewById(R.id.title);
         sliderLayout = (SliderLayout)findViewById(R.id.slider);
 
@@ -82,15 +83,14 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
             @Override
             public void onInit(int status) {
                 // TODO Auto-generated method stub
+                showProgressDialog();
                 if(status == TextToSpeech.SUCCESS){
                     int result=repeatText.setLanguage(Locale.ENGLISH);
                     if(result==TextToSpeech.LANG_MISSING_DATA ||
                             result==TextToSpeech.LANG_NOT_SUPPORTED){
                         Log.e("error", "This Language is not supported");
                     }
-                    else{
-                        ConvertTextToSpeech();
-                    }
+                    hideProgressDialog();
                 }
                 else
                     Log.e("error", "Initilization Failed!");
@@ -133,8 +133,8 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
         String text = information.getText().toString();
         if(text==null||"".equals(text))
         {
-            text = "Content not available";
             repeatText.speak(text, TextToSpeech.QUEUE_FLUSH, null);
+            listenButton.setImageResource(R.drawable.soundicon);
         }else
             repeatText.speak(text, TextToSpeech.QUEUE_FLUSH, null);
             listenButton.setImageResource(R.drawable.muteicon);
@@ -148,18 +148,17 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                monument = new Place();
-               // monument name goes on this line
 
-                //"Lucan Bridge"monumentName.trim()
-                monument.setEmail(dataSnapshot.child(monumentName.trim()).getValue().toString());
+                try {
+                    String info = (dataSnapshot.child(monumentName.trim()).getValue().toString());
+                    title.setText(monumentName.trim());
+                    String regex = "\\[|\\]";
+                    info = info.replaceAll(regex, "");
+                    information.setText(info);
 
-                title.setText(monumentName);
-                information.setMovementMethod(new ScrollingMovementMethod());
-                String info = monument.getEmail();
-                String regex = "\\[|\\]";
-                info = info.replaceAll(regex, "");
-                information.setText(info);
+                } catch(NullPointerException ex) {
+
+                }
 
                 informationImages();
             }
