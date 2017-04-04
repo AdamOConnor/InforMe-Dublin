@@ -22,6 +22,7 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
@@ -30,6 +31,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
@@ -101,6 +103,15 @@ public class MapsActivity extends Progress
             mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         }
+
+        FloatingActionButton myFab = (FloatingActionButton)  this.findViewById(R.id.floatingActionButton);
+        myFab.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                Intent intent = new Intent(MapsActivity.this ,AddInformation.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(intent);
+            }
+        });
 
         mGeofenceList = new ArrayList<>();
 
@@ -431,7 +442,12 @@ public class MapsActivity extends Progress
         }
 
         if (mGoogleApiClient != null) {
-            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            try {
+                LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            }catch(IllegalStateException ex ){
+
+            }
+
         }
     }
 

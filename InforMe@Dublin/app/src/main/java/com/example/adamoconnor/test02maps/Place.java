@@ -11,7 +11,7 @@ import java.util.ArrayList;
 public class Place {
 
 
-    public String getTest() {
+    /*public String getTest() {
         return test;
     }
 
@@ -21,16 +21,6 @@ public class Place {
 
     public String test;
     public String name;
-    public String email;
-
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
 
     public String getName() {
         return name;
@@ -38,11 +28,6 @@ public class Place {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    // Default constructor required for calls to
-    // DataSnapshot.getValue(Place.class)
-    public Place() {
-    }
+    }*/
 
 }

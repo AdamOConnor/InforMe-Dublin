@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="18dp"
+        android:text="@string/monument_namesendinfo"
+        android:textSize="15sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:id="@+id/monumentName"
+        style="@android:style/Widget.DeviceDefault.EditText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Monument"
+        android:inputType="textPersonName|textFilter"
+        android:textSize="15sp"
+        tools:ignore="HardcodedText,LabelFor,RelativeOverlap"
+        android:layout_marginStart="35dp"
+        android:layout_alignBaseline="@+id/textView"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_toEndOf="@+id/textView" />
+
+    <TextView
+        android:id="@+id/Location"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/textView"
+        android:layout_below="@+id/monumentName"
+        android:layout_marginTop="22dp"
+        android:text="@string/locationsendinfo"
+        android:textSize="15sp" />
+
+    <Spinner
+        android:id="@+id/locationSpinner"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:dropDownWidth="wrap_content"
+        android:visibility="visible"
+        android:entries="@array/items"
+        android:layout_alignBaseline="@+id/Location"
+        android:layout_alignBottom="@+id/Location"
+        android:layout_alignStart="@+id/monumentName"
+        android:layout_alignEnd="@+id/monumentName" />
+
+    <TextView
+        android:id="@+id/textView4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/Location"
+        android:layout_below="@+id/Location"
+        android:layout_marginTop="31dp"
+        android:text="@string/areasendinfo"
+        android:textSize="15sp" />
+
+    <EditText
+        android:id="@+id/editText3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:ems="10"
+        android:hint="Area "
+        android:inputType="textPersonName"
+        android:textSize="15sp"
+        android:layout_alignBaseline="@+id/textView4"
+        android:layout_alignBottom="@+id/textView4"
+        android:layout_alignStart="@+id/locationSpinner"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/galleryButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/editText3"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="27dp"
+        android:elevation="0dp"
+        android:text="Select Images"
+        android:textAlignment="center"
+        android:textSize="15sp"
+        android:visibility="visible" />
+
+
+</RelativeLayout>

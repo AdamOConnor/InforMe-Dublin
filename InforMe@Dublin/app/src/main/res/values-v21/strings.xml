@@ -1,4 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="network_not_enabled">No Internet Connection</string>
+    <string name="location">Location</string>
+    <string name="monument">Monument</string>
+    <string name="monument_name">Monument Name</string>
+    <string name="area">Area :</string>
+    <string name="areasendinfo">Area :</string>
+    <string name="locationsendinfo">Location :</string>
+    <string name="monument_namesendinfo">Monument Name :</string>
 </resources>

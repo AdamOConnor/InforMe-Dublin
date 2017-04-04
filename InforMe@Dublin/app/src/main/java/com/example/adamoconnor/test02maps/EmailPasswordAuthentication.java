@@ -48,6 +48,8 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
+import static com.example.adamoconnor.test02maps.R.id.action_addInformation;
+import static com.example.adamoconnor.test02maps.R.id.action_settings;
 
 public class EmailPasswordAuthentication extends Progress implements
         View.OnClickListener {
@@ -208,7 +210,7 @@ public class EmailPasswordAuthentication extends Progress implements
     public void forgottenPassword() {
 
         FirebaseAuth auth = FirebaseAuth.getInstance();
-        String emailAddress = String.valueOf(mEmailField.getText());
+        final String emailAddress = String.valueOf(mEmailField.getText());
         android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches();
 
         if(emailAddress != null && android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
@@ -219,7 +221,7 @@ public class EmailPasswordAuthentication extends Progress implements
                             if (task.isSuccessful()) {
                                 new AlertDialog.Builder(EmailPasswordAuthentication.this)
                                         .setTitle("Password Reset")
-                                        .setMessage("An Email has been sent to the originating email address on which you have chosen\n Thank you !!")
+                                        .setMessage("An Email has been sent to the following email address "+emailAddress)
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int which) {
 
@@ -239,7 +241,7 @@ public class EmailPasswordAuthentication extends Progress implements
         }
         else {
             new AlertDialog.Builder(EmailPasswordAuthentication.this)
-                    .setTitle("Not a valid Email Address")
+                    .setTitle("Email Address")
                     .setMessage("Please enter a valid email address")
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
@@ -260,10 +262,15 @@ public class EmailPasswordAuthentication extends Progress implements
     // creating an options menu for settings page
     public boolean onOptionsItemSelected(MenuItem item) {
 
-        Intent intent = new Intent(this,SettingsActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(intent);
-        return true;
+        int id = item.getItemId();
+
+        if(id == action_settings) {
+            Intent intent = new Intent(this,SettingsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            return true;
+        }
+        return false;
     }
 
     public boolean onCreateOptionsMenu(Menu menu) {
