@@ -111,7 +111,7 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="monument">Monument</string>
-    <string name="title_activity_user_add_monument">InforMe@Dublin</string>
+    <string name="title_activity_user_add_monument">Submit proposed site</string>
     <string name="areasendinfo">Area :</string>
     <string name="locationsendinfo">Location :</string>
     <string name="monument_namesendinfo">Monument Name :</string>

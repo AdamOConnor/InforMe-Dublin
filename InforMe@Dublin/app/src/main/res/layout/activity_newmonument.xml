@@ -52,7 +52,7 @@
         android:layout_alignEnd="@+id/monumentName" />
 
     <TextView
-        android:id="@+id/textView4"
+        android:id="@+id/areaText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/Location"
@@ -62,30 +62,75 @@
         android:textSize="15sp" />
 
     <EditText
-        android:id="@+id/editText3"
+        android:id="@+id/area"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ems="10"
         android:hint="Area "
         android:inputType="textPersonName"
         android:textSize="15sp"
-        android:layout_alignBaseline="@+id/textView4"
-        android:layout_alignBottom="@+id/textView4"
+        android:layout_alignBaseline="@+id/areaText"
+        android:layout_alignBottom="@+id/areaText"
         android:layout_alignStart="@+id/locationSpinner"
         tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/monumentInformation"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignEnd="@+id/area"
+        android:layout_alignStart="@+id/galleryButton"
+        android:layout_below="@+id/area"
+        android:layout_marginTop="68dp"
+        android:gravity="top|left"
+        android:inputType="textMultiLine"
+        android:lines="15"
+        android:maxLines="20"
+        android:minLines="6"
+        android:scrollbars="vertical"
+        android:textSize="15sp"
+        tools:ignore="LabelFor,RtlHardcoded" />
+
+    <Button
+        android:id="@+id/submitButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/galleryButton"
+        android:layout_alignBottom="@+id/galleryButton"
+        android:layout_alignEnd="@+id/monumentInformation"
+        android:elevation="0dp"
+        android:text="Send Information"
+        android:textAlignment="center"
+        android:textSize="14sp"
+        android:theme="@style/ThemeOverlay.MyDarkButton"
+        android:visibility="visible"
+        tools:ignore="ButtonStyle" />
 
     <Button
         android:id="@+id/galleryButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/editText3"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="27dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignStart="@+id/textView"
+        android:layout_marginBottom="33dp"
+        android:layout_toStartOf="@+id/area"
         android:elevation="0dp"
         android:text="Select Images"
         android:textAlignment="center"
+        android:textSize="14sp"
+        android:theme="@style/ThemeOverlay.MyDarkButton"
+        android:visibility="visible"
+        tools:ignore="ButtonStyle" />
+
+    <TextView
+        android:id="@+id/historyHeading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="29dp"
+        android:text="Monument Information : "
         android:textSize="15sp"
-        android:visibility="visible" />
+        android:layout_below="@+id/area"
+        android:layout_alignStart="@+id/monumentInformation" />
 
 
 </RelativeLayout>

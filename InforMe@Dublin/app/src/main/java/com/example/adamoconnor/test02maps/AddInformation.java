@@ -7,12 +7,17 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.nfc.Tag;
 import android.provider.MediaStore;
+import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
@@ -24,7 +29,7 @@ public class AddInformation extends AppCompatActivity {
     private static final String TAG = "Add Information";
     int PICK_IMAGE_MULTIPLE = 1;
     String imageEncoded;
-    List<String> imagesEncodedList;
+    private static List<String> imagesEncodedList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +39,11 @@ public class AddInformation extends AppCompatActivity {
         setupActionBar();
 
         Button gallery = (Button)findViewById(R.id.galleryButton);
+        Button sendEmail = (Button)findViewById(R.id.submitButton);
+        final EditText monumentName = (EditText)findViewById(R.id.monumentName);
+        final Spinner location = (Spinner)findViewById(R.id.locationSpinner);
+        final EditText areaName = (EditText)findViewById(R.id.area);
+        final EditText monumentInformation = (EditText)findViewById(R.id.monumentInformation);
 
         gallery.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,6 +59,39 @@ public class AddInformation extends AppCompatActivity {
 
             }
         });
+
+        sendEmail.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+
+                if(monumentName.getText().toString().trim().equals("")) {
+
+                    monumentName.setError("Monument name is required!");
+                }else
+                    if(areaName.getText().toString().trim().equals("")) {
+                        areaName.setError("Area location is required!");
+                    } else
+                        if(monumentInformation.getText().toString().trim().equals("")) {
+                            monumentInformation.setError("Monument Information is required!");
+                        }
+                        else {
+                            email("informedublinproject@gmail.com","CC someone",
+                                    "Add New Monument - InforMe@Dublin","Monument Name : "+monumentName.getText()+"\n"
+                                            +"Location : "+location.getSelectedItem().toString()
+                                            +"\n"+"Area name : "+areaName.getText()+"\n"+"Monument Information : "+monumentInformation.getText());
+                        }
+            }
+        });
+    }
+
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            NavUtils.navigateUpFromSameTask(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     @Override
@@ -93,7 +136,6 @@ public class AddInformation extends AppCompatActivity {
                             imageEncoded  = cursor.getString(columnIndex);
                             imagesEncodedList.add(imageEncoded);
                             cursor.close();
-                            Log.d("LOG_TAG", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1" + mArrayUri.get(i));
                         }
 
                     }
@@ -119,8 +161,8 @@ public class AddInformation extends AppCompatActivity {
         }
     }
 
-    public static void email(Context context, String emailTo, String emailCC,
-                             String subject, String emailText, List<String> filePaths)
+    public void email(String emailTo, String emailCC,
+                             String subject, String emailText)
     {
         //need to "send multiple" to get more than one attachment
         final Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
@@ -134,13 +176,18 @@ public class AddInformation extends AppCompatActivity {
         //has to be an ArrayList
         ArrayList<Uri> uris = new ArrayList<Uri>();
         //convert from paths to Android friendly Parcelable Uri's
-        for (String file : filePaths)
-        {
-            File fileIn = new File(file);
-            Uri u = Uri.fromFile(fileIn);
-            uris.add(u);
+        try {
+            for (String file : imagesEncodedList)
+            {
+                File fileIn = new File(file);
+                Uri u = Uri.fromFile(fileIn);
+                uris.add(u);
+            }
+        } catch (NullPointerException ex) {
+
         }
+
         emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);
-        context.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
+        this.startActivity(Intent.createChooser(emailIntent, "Send mail..."));
     }
 }

@@ -461,7 +461,7 @@ public class MapsActivity extends Progress
             } else {
                 //far
                 WindowManager.LayoutParams layout = getWindow().getAttributes();
-                layout.screenBrightness = 1F;
+                layout.screenBrightness = 0.7F;
                 getWindow().setAttributes(layout);
             }
         }
