@@ -10,24 +10,13 @@ import java.util.ArrayList;
 @IgnoreExtraProperties
 public class Place {
 
+    static String MonumentName;
 
-    /*public String getTest() {
-        return test;
+    public static String getMonumentName() {
+        return MonumentName;
     }
 
-    public void setTest(String test) {
-        this.test = test;
+    public static void setMonumentName(String monumentName) {
+        MonumentName = monumentName;
     }
-
-    public String test;
-    public String name;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }*/
-
 }

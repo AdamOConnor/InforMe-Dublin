@@ -1,14 +1,7 @@
 package com.example.adamoconnor.test02maps;
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
-import android.support.v7.app.AlertDialog;
-import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageButton;
@@ -29,6 +22,9 @@ import com.google.firebase.database.ValueEventListener;
 
 import java.util.HashMap;
 import java.util.Locale;
+
+import static com.example.adamoconnor.test02maps.Place.getMonumentName;
+import static com.example.adamoconnor.test02maps.Place.setMonumentName;
 
 /**
  * Created by Adam O'Connor on 19/01/2017.
@@ -58,11 +54,13 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
                 monumentName = extras.getString("1");
                 if(monumentName == null) {
                     monumentName = extras.getString("monumentInformation");
+                    setMonumentName(monumentName);
                 }
             }
         } else {
             try {
                 monumentName = extras.getString("monumentInformation");
+                setMonumentName(monumentName);
             }catch(NullPointerException ex) {
 
             }
@@ -118,7 +116,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
             listenButton.setImageResource(R.drawable.soundicon);
             repeatText.stop();
         }
-            // If it's not playing
+        // If it's not playing
         else {
             // Resume the music player
             listenButton.setImageResource(R.drawable.muteicon);
@@ -137,7 +135,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
             listenButton.setImageResource(R.drawable.soundicon);
         }else
             repeatText.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-            listenButton.setImageResource(R.drawable.muteicon);
+        listenButton.setImageResource(R.drawable.muteicon);
 
     }
 
@@ -150,17 +148,19 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 try {
-                    String info = (dataSnapshot.child(monumentName.trim()).getValue().toString());
+
+                    String info = (dataSnapshot.child(getMonumentName().trim()).getValue().toString());
                     title.setText(monumentName.trim());
                     String regex = "\\[|\\]";
                     info = info.replaceAll(regex, "");
                     information.setText(info);
+                    informationImages();
 
                 } catch(NullPointerException ex) {
 
                 }
 
-                informationImages();
+
             }
 
             @Override
@@ -174,7 +174,7 @@ public class Information extends Progress implements BaseSliderView.OnSliderClic
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         // pass the name of the monument
-        final DatabaseReference myRef = database.child("images").child(monumentName.trim());
+        DatabaseReference myRef = database.child("images").child(getMonumentName().trim());
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot alerts) {

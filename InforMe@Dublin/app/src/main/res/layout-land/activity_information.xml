@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ext="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:weightSum="1">
+
+    <com.bluejamesbond.text.DocumentView
+        android:id="@+id/informationText"
+        android:layout_width="279dp"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        ext:documentView_insetPaddingLeft="0dp"
+        ext:documentView_insetPaddingRight="5dp"
+        ext:documentView_textAlignment="justified"
+        ext:documentView_textColor="@android:color/darker_gray"
+        ext:documentView_textFormat="plain"
+        ext:documentView_textSize="16sp"
+        android:layout_toEndOf="@+id/slider" />
+
+    <com.daimajia.slider.library.SliderLayout
+        android:id="@+id/slider"
+        android:layout_width="308dp"
+        android:layout_height="220dp">
+
+    </com.daimajia.slider.library.SliderLayout>
+
+    <android.support.v7.widget.CardView
+        android:layout_width="308dp"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/slider">
+
+        <android.support.v7.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="308dp"
+            android:layout_height="match_parent"
+            android:background="?attr/colorPrimaryDark"
+            android:minHeight="78dp"
+            android:theme="?attr/actionBarTheme" />
+
+        <ImageButton
+            android:id="@+id/informationListen"
+            android:layout_width="44dp"
+            android:layout_height="42dp"
+            android:layout_marginLeft="260dp"
+            android:layout_marginTop="20dp"
+            android:adjustViewBounds="true"
+            android:clickable="true"
+            android:elevation="0dp"
+            android:onClick="TextToSpeech"
+            tools:ignore="ContentDescription,RtlHardcoded" />
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="10dp"
+            android:paddingTop="30dp"
+            android:text="Historic monument"
+            android:textColor="@color/common_google_signin_btn_text_dark_default"
+            android:textSize="25sp"
+            tools:ignore="HardcodedText,RtlHardcoded,RtlSymmetry" />
+
+    </android.support.v7.widget.CardView>
+</RelativeLayout>
