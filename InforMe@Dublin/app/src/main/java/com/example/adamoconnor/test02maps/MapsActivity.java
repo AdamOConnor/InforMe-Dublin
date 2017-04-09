@@ -15,16 +15,13 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.Criteria;
 import android.location.Location;
 
-import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
-import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
@@ -42,7 +39,6 @@ import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
-import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -63,7 +59,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static android.R.attr.delay;
 import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
 import static com.example.adamoconnor.test02maps.R.id.map;
 
@@ -85,7 +80,6 @@ public class MapsActivity extends Progress
     GoogleMap mGoogleMap;
     boolean test = true;
     SupportMapFragment mapFrag;
-    //LocationRequest mLocationRequest;
     Location mLastLocation;
     Marker mCurrLocationMarker;
     myReceiver myReceiver;
@@ -97,14 +91,8 @@ public class MapsActivity extends Progress
     private LocationManager locationManager;
     private String bestAvailableProvider = LocationManager.GPS_PROVIDER;
     private OnLocationChangedListener mListener;
-    /* Updates are restricted to one every 10 seconds, and only when
-     * movement of more than 10 meters has been detected.*/
-    //private final int minTime = 10000;     // minimum time interval between location updates, in milliseconds
-    //private final int minDistance = 10;    // minimum distance between location updates, in meters
-    private String provider = LocationManager.GPS_PROVIDER;
     private long minTime = 1000;
     private float minDistance = 10;
-    private LocationListener listener;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     protected LocationRequest mLocationRequest;
     /**
@@ -136,8 +124,6 @@ public class MapsActivity extends Progress
         }
 
         isLocationOn();
-        // Empty list for storing geofences.
-        //locationManager = (LocationManager) mContext.getSystemService(Context.LOCATION_SERVICE);
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
@@ -152,7 +138,7 @@ public class MapsActivity extends Progress
             public void onClick(View v) {
                /* Intent intent = new Intent(MapsActivity.this ,AddInformation.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(intent);*/
+                startActivity(intent);
                 final Handler h = new Handler();
                 final int delay = 1000; //milliseconds
 
@@ -161,7 +147,8 @@ public class MapsActivity extends Progress
                         startLocationUpdates();
                         h.postDelayed(this, delay);
                     }
-                }, delay);
+                }, delay);*/
+
             }
         });
 
@@ -661,7 +648,7 @@ public class MapsActivity extends Progress
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
-                            Intent monumentInformationIntent = new Intent(getApplicationContext(),Information.class);
+                            Intent monumentInformationIntent = new Intent(getApplicationContext(),InformationFlipActivity.class);
                             monumentInformationIntent.putExtra("monumentInformation", datapassed);
                             startActivity(monumentInformationIntent);
 

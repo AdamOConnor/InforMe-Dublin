@@ -73,6 +73,14 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapsActivity" />
         </activity>
-    </application>
+        <activity android:name=".InformationFlipActivity"
+            android:label="Card Flip"
+            android:parentActivityName=".MapsActivity"
+            android:theme="@style/AppTheme">
+            <meta-data android:name="android.support.PARENT_ACTIVITY"
+                android:value=".MapsActivity" />
+        </activity>
+        <activity android:name=".InformationFrontFragment" />
 
+    </application>
 </manifest>

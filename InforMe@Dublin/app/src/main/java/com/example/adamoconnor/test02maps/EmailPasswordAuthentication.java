@@ -48,7 +48,6 @@ import java.util.List;
 import java.util.Locale;
 
 import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
-import static com.example.adamoconnor.test02maps.R.id.action_addInformation;
 import static com.example.adamoconnor.test02maps.R.id.action_settings;
 
 public class EmailPasswordAuthentication extends Progress implements

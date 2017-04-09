@@ -7,7 +7,7 @@ import android.support.v7.app.AppCompatActivity;
 public class Progress extends AppCompatActivity {
 
     @VisibleForTesting
-    public ProgressDialog mProgressDialog;
+    public static ProgressDialog mProgressDialog;
 
     public void showProgressDialog() {
         if (mProgressDialog == null) {

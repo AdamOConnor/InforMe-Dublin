@@ -74,7 +74,7 @@ public class GeofenceTransitionsIntentService extends IntentService {
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         String[] splited = text.split("\\|");
         // 2. Create a PendingIntent for AllGeofencesActivity
-        Intent intent = new Intent(this, Information.class);
+        Intent intent = new Intent(this, InformationFlipActivity.class);//Information.class
         intent.putExtra("1", splited[1]);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);//FLAG_UPDATE_CURRENT
         PendingIntent pendingNotificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent. FLAG_UPDATE_CURRENT);

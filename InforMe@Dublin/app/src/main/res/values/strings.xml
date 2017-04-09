@@ -115,6 +115,13 @@
     <string name="areasendinfo">Area :</string>
     <string name="locationsendinfo">Location :</string>
     <string name="monument_namesendinfo">Monument Name :</string>
+
+    <string name="card_back_title">Angry Red Android</string>
+    <string name="card_back_description"><![CDATA[Lorem ipsum dolor sit]]></string>
+    <string name="lorem_ipsum">![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris et magna ut erat elementum cursus</string>
+    <string name="action_info">Photo info</string>
+    <string name="action_photo">View photo</string>
+
 </resources>
 
 
