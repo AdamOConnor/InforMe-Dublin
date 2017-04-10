@@ -6,23 +6,41 @@
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/map"
+        android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/map"
-        tools:context="com.example.app.MapLocationActivity"
-        android:name="com.google.android.gms.maps.SupportMapFragment"/>
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        tools:context="com.example.app.MapLocationActivity" />
 
     <android.support.design.widget.FloatingActionButton
-        android:id="@+id/floatingActionButton"
+        android:id="@+id/floatingAddInfoButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="52dp"
-        android:layout_marginStart="14dp"
+        android:layout_marginBottom="29dp"
         android:clickable="true"
         app:backgroundTint="#dcc0c0c0"
         app:srcCompat="@drawable/informe"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginStart="10dp" />
+
+    <ToggleButton
+        android:id="@+id/toggleFocus"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginEnd="11dp"
+        android:layout_marginTop="10dp"
+        android:backgroundTint="@color/TransparetFocus"
+        android:drawableTop="@drawable/focus1"
+        android:gravity="center"
+        android:soundEffectsEnabled="true"
+        android:textOff=""
+        android:textOn=""
+        android:textSize="0dp" />
 
 </RelativeLayout>
 

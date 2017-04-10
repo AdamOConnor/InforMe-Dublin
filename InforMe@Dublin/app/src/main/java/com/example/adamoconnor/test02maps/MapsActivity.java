@@ -10,6 +10,7 @@ import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
@@ -22,6 +23,7 @@ import android.location.LocationManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
@@ -32,7 +34,10 @@ import android.support.v7.app.AlertDialog;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.CompoundButton;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -95,6 +100,9 @@ public class MapsActivity extends Progress
     private float minDistance = 10;
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
     protected LocationRequest mLocationRequest;
+    protected Handler h;
+    protected boolean focus;
+    protected Runnable myrunnable;
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -110,8 +118,6 @@ public class MapsActivity extends Progress
     /**
      * Represents a geographical location.
      */
-    protected Location mCurrentLocation;
-
 
 
     @Override
@@ -133,13 +139,13 @@ public class MapsActivity extends Progress
             mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         }
 
-        FloatingActionButton myFab = (FloatingActionButton)  this.findViewById(R.id.floatingActionButton);
-        myFab.setOnClickListener(new View.OnClickListener() {
+        FloatingActionButton addInfo = (FloatingActionButton)  this.findViewById(R.id.floatingAddInfoButton);
+        addInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-               /* Intent intent = new Intent(MapsActivity.this ,AddInformation.class);
+                Intent intent = new Intent(MapsActivity.this ,AddInformation.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-                final Handler h = new Handler();
+               /* final Handler h = new Handler();
                 final int delay = 1000; //milliseconds
 
                 h.postDelayed(new Runnable(){
@@ -149,6 +155,51 @@ public class MapsActivity extends Progress
                     }
                 }, delay);*/
 
+            }
+        });
+
+        /*focusButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+
+                if(focus == false) {
+                    focusButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.TransparetNonFocus)));
+                    stopLocationUpdates();
+                }
+                else
+                    if(focus) {
+                        focusButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.TransparetFocus)));
+
+                    }
+
+
+            }
+        });*/
+        final ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleFocus);
+        toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                    // The toggle is enabled
+                    toggle.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.TransparetFocus)));
+                    h = new Handler();
+                    final int delay = 2000; //milliseconds
+
+
+                    h.postDelayed(myrunnable = new Runnable(){
+                        public void run(){
+                            startLocationUpdates();
+                            h.postDelayed(this, delay);
+                        }
+                    }, delay);
+                } else {
+                    // The toggle is disabled
+                    toggle.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.TransparetNonFocus)));
+                    try {
+                        h.removeCallbacks(myrunnable);
+                    }catch (NullPointerException ex) {
+
+                    }
+                    stopLocationUpdates();
+                }
             }
         });
 
@@ -328,6 +379,21 @@ public class MapsActivity extends Progress
 
     }
 
+    protected void stopLocationUpdates() {
+        // It is a good practice to remove location requests when the activity is in a paused or
+        // stopped state. Doing so helps battery performance and is especially
+        // recommended in applications that request frequent location updates.
+        LocationServices.FusedLocationApi.removeLocationUpdates(
+                mGoogleApiClient,
+                this
+        ).setResultCallback(new ResultCallback<Status>() {
+            @Override
+            public void onResult(Status status) {
+                mRequestingLocationUpdates = false;
+            }
+        });
+    }
+
     /* Activates this provider. This provider will notify the supplied listener
          * periodically, until you call deactivate().
          * This method is automatically invoked by enabling my-location layer. */
@@ -375,7 +441,7 @@ public class MapsActivity extends Progress
             latitude = findMe.getLatitude();
             longitude = findMe.getLongitude();
 
-        }catch(NullPointerException ex) {
+        }catch(Exception ex) {
             ex.getLocalizedMessage();
         }finally {
             if(latitude != 0 && longitude != 0) {
@@ -394,13 +460,14 @@ public class MapsActivity extends Progress
                 .build();                   // Creates a CameraPosition from the builder
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
+        mGoogleMap.clear();
 
         for (Map.Entry<String, LatLng> entry : LANDMARKS.entrySet()) {
 
             CircleOptions circleOptions = new CircleOptions()
                     .center(new LatLng(entry.getValue().latitude,entry.getValue().longitude))
                     .strokeColor(Color.argb(50, 70,70,70))
-                    .fillColor( Color.argb(100, 150,150,150) )
+                    .fillColor(getResources().getColor(R.color.Geofence))
                     .radius(50);
             mGoogleMap.addCircle( circleOptions );
 
