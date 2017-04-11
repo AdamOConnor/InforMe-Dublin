@@ -145,35 +145,9 @@ public class MapsActivity extends Progress
                 Intent intent = new Intent(MapsActivity.this ,AddInformation.class);
                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
-               /* final Handler h = new Handler();
-                final int delay = 1000; //milliseconds
-
-                h.postDelayed(new Runnable(){
-                    public void run(){
-                        startLocationUpdates();
-                        h.postDelayed(this, delay);
-                    }
-                }, delay);*/
-
             }
         });
 
-        /*focusButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-
-                if(focus == false) {
-                    focusButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.TransparetNonFocus)));
-                    stopLocationUpdates();
-                }
-                else
-                    if(focus) {
-                        focusButton.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.TransparetFocus)));
-
-                    }
-
-
-            }
-        });*/
         final ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleFocus);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {

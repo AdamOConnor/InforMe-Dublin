@@ -93,21 +93,17 @@ public class InformationFlipActivity extends AppCompatActivity
         public void run() {
             // TODO Auto-generated method stub
 
-                    // If there is no saved instance state, add a fragment representing the
-                    // front of the card to this activity. If there is saved instance state,
-                    // this fragment will have already been added to the activity.
-                    getFragmentManager()
-                            .beginTransaction()
-                            .add(R.id.container, new InformationFrontFragment())
-                            .commit();
+            // If there is no saved instance state, add a fragment representing the
+            // front of the card to this activity. If there is saved instance state,
+            // this fragment will have already been added to the activity.
+            getFragmentManager()
+                    .beginTransaction()
+                    .add(R.id.container, new InformationFrontFragment())
+                    .commit();
 
         }
 
-
-
     }
-
-
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -170,7 +166,7 @@ public class InformationFlipActivity extends AppCompatActivity
                 // Replace any fragments currently in the container view with a fragment
                 // representing the next page (indicated by the just-incremented currentPage
                 // variable).
-                .replace(R.id.container, new CardBackFragment())
+                .replace(R.id.container, new InformationBackCommentsFragment())
 
                 // Add this transaction to the back stack, allowing users to press Back
                 // to get to the front of the card.
@@ -198,6 +194,19 @@ public class InformationFlipActivity extends AppCompatActivity
         invalidateOptionsMenu();
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();  // Always call the superclass method first
+
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();  // Always call the superclass method first
+
+    }
+
+
     /**
      * A fragment representing the front of the card.
      */
@@ -206,14 +215,5 @@ public class InformationFlipActivity extends AppCompatActivity
     /**
      * A fragment representing the back of the card.
      */
-    public static class CardBackFragment extends Fragment {
-        public CardBackFragment() {
-        }
 
-        @Override
-        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                                 Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_card_back, container, false);
-        }
-    }
 }

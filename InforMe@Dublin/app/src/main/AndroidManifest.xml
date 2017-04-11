@@ -5,7 +5,7 @@
     <!--
          The ACCESS_COARSE/FINE_LOCATION permissions are not required to use
          Google Maps Android API v2, but you must specify either coarse or fine
-         location permissions for the 'MyLocation' functionality. 
+         location permissions for the 'MyLocation' functionality.
     -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -27,7 +27,7 @@
              Note that the API key is linked to the encryption key used to sign the APK.
              You need a different API key for each encryption key, including the release key that is used to
              sign the APK for publishing.
-             You can define the keys for the debug and release targets in src/debug/ and src/release/. 
+             You can define the keys for the debug and release targets in src/debug/ and src/release/.
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
@@ -44,8 +44,7 @@
         </activity>
         <activity
             android:name=".MapsActivity"
-            android:windowSoftInputMode="stateAlwaysHidden"
-            />
+            android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
             android:name=".Information"
             android:label="Local information" />
@@ -66,21 +65,24 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".EmailPasswordAuthentication" />
         </activity>
-        <activity android:name=".AddInformation"
+        <activity
+            android:name=".AddInformation"
             android:label="Submit Proposed Site"
             android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapsActivity" />
         </activity>
-        <activity android:name=".InformationFlipActivity"
+        <activity
+            android:name=".InformationFlipActivity"
             android:label="Card Flip"
             android:parentActivityName=".MapsActivity"
             android:theme="@style/AppTheme">
-            <meta-data android:name="android.support.PARENT_ACTIVITY"
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapsActivity" />
         </activity>
-        <activity android:name=".InformationFrontFragment" />
-
+        <activity android:name=".PostActivity"></activity>
     </application>
+
 </manifest>

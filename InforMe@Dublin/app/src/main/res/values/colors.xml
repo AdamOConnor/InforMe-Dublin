@@ -9,4 +9,6 @@
     <color name="TransparetFocus">#aa4fe83d</color>
     <color name="TransparetNonFocus">#aafc5137</color>
     <color name="Geofence">#5777ccc1</color>
+    <color name="transparentgray">#d5908a8a</color>
+    <color name="greyColour">#c2c2c2</color>
 </resources>
