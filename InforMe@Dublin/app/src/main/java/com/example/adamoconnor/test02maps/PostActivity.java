@@ -2,6 +2,7 @@ package com.example.adamoconnor.test02maps;
 
 import android.app.Dialog;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.AsyncTask;
@@ -21,6 +22,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.util.Random;
 
@@ -28,6 +30,7 @@ import static com.example.adamoconnor.test02maps.Place.getMonumentName;
 
 public class PostActivity extends AppCompatActivity {
 
+    private Context mContext;
     private ImageButton selectImage;
     private EditText postTitle;
     private EditText postDescription;
@@ -42,6 +45,8 @@ public class PostActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
+
+        mContext = this;
 
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("comments").child(getMonumentName());
@@ -104,7 +109,10 @@ public class PostActivity extends AppCompatActivity {
             this.runOnUiThread(new Runnable() {
                 public void run() {
                     imageUri = data.getData();
-                    selectImage.setImageURI(imageUri);
+                    Picasso.with(mContext)
+                            .load(imageUri)
+                            .centerCrop()
+                            .into(selectImage);
                 }
             });
 
@@ -140,7 +148,7 @@ public class PostActivity extends AppCompatActivity {
         protected String doInBackground(Void... params) {
 
             try {
-                Thread.sleep(7000);
+                Thread.sleep(5000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -472,7 +472,12 @@ public class MapsActivity extends Progress
         }
 
         if(test) {
-            PopulateGeofences();
+            try{
+                PopulateGeofences();
+            }catch (IllegalStateException ex) {
+
+            }
+
             test = false;
         }
 
