@@ -1,13 +1,9 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
-import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -18,6 +14,8 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
+import com.example.adamoconnor.test02maps.LoginAndRegister.Progress;
+import com.example.adamoconnor.test02maps.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,14 +25,16 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Locale;
 
-import static com.example.adamoconnor.test02maps.Place.getMonumentName;
+import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.getMonumentName;
+import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.setMonumentName;
 
 /**
- * Created by Adam O'Connor on 07/04/2017.
+ * Created by Adam O'Connor on 19/01/2017.
  */
 
-public class InformationFrontFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
+public class Information extends Progress implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
+    private static final String TAG = Information.class.getSimpleName();
     private TextToSpeech repeatText;
     private DocumentView information;
     private TextView title;
@@ -42,66 +42,77 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
     private SliderLayout sliderLayout;
     private HashMap<String,String> Hash_file_maps ;
     private String monumentName = null;
-    private ProgressDialog infoProgress;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_information);
+        Bundle extras = null;
+        if (savedInstanceState == null) {
+            extras = getIntent().getExtras();
+            if(extras == null) {
+                monumentName= null;
+            } else {
+                monumentName = extras.getString("1");
+                setMonumentName(monumentName);
+                if(monumentName == null) {
+                    monumentName = extras.getString("monumentInformation");
+                    setMonumentName(monumentName);
+                }
+            }
+        } else {
+            try {
+                monumentName = extras.getString("monumentInformation");
+                setMonumentName(monumentName);
+            }catch(NullPointerException ex) {
 
-        Place activity = new Place();
-        monumentName = activity.getMonumentName();
+            }
 
-        View view = inflater.inflate(R.layout.activity_information, container, false);
+        }
 
-        listenButton = (ImageButton)view.findViewById(R.id.informationListen);
+        listenButton = (ImageButton)findViewById(R.id.informationListen);
         listenButton.setImageResource(R.drawable.soundicon);
-        information = (DocumentView)view.findViewById(R.id.informationText);
-        title = (TextView)view.findViewById(R.id.title);
-        sliderLayout = (SliderLayout)view.findViewById(R.id.slider);
+        information = (DocumentView)findViewById(R.id.informationText);
+        title = (TextView)findViewById(R.id.title);
+        sliderLayout = (SliderLayout)findViewById(R.id.slider);
 
-        infoProgress = ProgressDialog.show(getActivity(), "Loading...", "Please wait...", true);
-
+        showProgressDialog();
         LoadData();
 
-        listenButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                TextToSpeech(v);
-            }
-        });
-
-        repeatText=new TextToSpeech(getContext(), new TextToSpeech.OnInitListener() {
+        repeatText=new TextToSpeech(Information.this, new TextToSpeech.OnInitListener() {
 
             @Override
             public void onInit(int status) {
                 // TODO Auto-generated method stub
-
+                showProgressDialog();
                 if(status == TextToSpeech.SUCCESS){
                     int result=repeatText.setLanguage(Locale.ENGLISH);
                     if(result==TextToSpeech.LANG_MISSING_DATA ||
                             result==TextToSpeech.LANG_NOT_SUPPORTED){
                         Log.e("error", "This Language is not supported");
                     }
+                    hideProgressDialog();
                 }
                 else
                     Log.e("error", "Initilization Failed!");
             }
         });
-        return view;
 
     }
 
     @Override
-    public void onPause() {
+    protected void onPause() {
         // TODO Auto-generated method stub
 
         if(repeatText != null){
             repeatText.stop();
             repeatText.shutdown();
         }
+        finish();
         super.onPause();
     }
 
-    public void TextToSpeech(View view){
+    public void TextToSpeech(View v){
 
         if(repeatText.isSpeaking()) {
 
@@ -166,7 +177,7 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
 
         DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         // pass the name of the monument
-        DatabaseReference myRef = database.child("images").child(getMonumentName().trim());
+        final DatabaseReference myRef = database.child("images").child(monumentName.trim());
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot alerts) {
@@ -183,12 +194,12 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
 
                 for(String name : Hash_file_maps.keySet()){
 
-                    TextSliderView textSliderView = new TextSliderView(getContext());
+                    TextSliderView textSliderView = new TextSliderView(Information.this);
                     textSliderView
                             .description(name)
                             .image(Hash_file_maps.get(name))
                             .setScaleType(BaseSliderView.ScaleType.Fit)
-                            .setOnSliderClickListener(InformationFrontFragment.this);
+                            .setOnSliderClickListener(Information.this);
                     textSliderView.bundle(new Bundle());
                     textSliderView.getBundle()
                             .putString("extra",name);
@@ -198,7 +209,7 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
                 sliderLayout.setPresetIndicator(SliderLayout.PresetIndicators.Center_Bottom);
                 sliderLayout.setCustomAnimation(new DescriptionAnimation());
                 sliderLayout.setDuration(3000);
-                sliderLayout.addOnPageChangeListener(InformationFrontFragment.this);
+                sliderLayout.addOnPageChangeListener(Information.this);
 
             }
 
@@ -206,8 +217,9 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
             public void onCancelled(DatabaseError databaseError) {}
 
         });
-        infoProgress.cancel();
+        hideProgressDialog();
     }
+
 
     @Override
     public void onStop() {
@@ -217,15 +229,19 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
 
     @Override
     public void onSliderClick(BaseSliderView slider) {
-        Toast.makeText(getContext(),slider.getBundle().get("extra") + "", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,slider.getBundle().get("extra") +"", Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {}
 
     @Override
-    public void onPageSelected(int position) {}
+    public void onPageSelected(int position) {
+        Log.d("Slider Demo", "Page Changed: " + position);
+    }
 
     @Override
     public void onPageScrollStateChanged(int state) {}
+
+
 }

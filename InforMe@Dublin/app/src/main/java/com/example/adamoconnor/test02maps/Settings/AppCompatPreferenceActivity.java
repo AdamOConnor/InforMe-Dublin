@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.Settings;
 
 import android.content.res.Configuration;
 import android.os.Bundle;

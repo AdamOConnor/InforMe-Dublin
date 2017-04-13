@@ -1,6 +1,5 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
-import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -13,9 +12,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.TextView;
-import android.widget.Toast;
 
+import com.example.adamoconnor.test02maps.R;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -26,7 +24,7 @@ import com.squareup.picasso.Picasso;
 
 import java.util.Random;
 
-import static com.example.adamoconnor.test02maps.Place.getMonumentName;
+import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.getMonumentName;
 
 public class PostActivity extends AppCompatActivity {
 
@@ -163,7 +161,7 @@ public class PostActivity extends AppCompatActivity {
 
             if (!TextUtils.isEmpty(titleValue) && !TextUtils.isEmpty(descriptionValue) && imageUri != null) {
 
-                StorageReference filePath = mStorage.child("Blog_Image").child(imageUri.getLastPathSegment());
+                StorageReference filePath = mStorage.child("Blog_Image").child(random());
 
                 filePath.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override

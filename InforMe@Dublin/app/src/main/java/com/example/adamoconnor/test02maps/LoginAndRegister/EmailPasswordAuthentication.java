@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.LoginAndRegister;
 
 /**
  * Created by Adam O'Connor on 04/11/2016.
@@ -29,6 +29,9 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.adamoconnor.test02maps.MapsAndGeofencing.MapsActivity;
+import com.example.adamoconnor.test02maps.R;
+import com.example.adamoconnor.test02maps.Settings.SettingsActivity;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -47,7 +50,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
 
-import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
+import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Constants.LANDMARKS;
 import static com.example.adamoconnor.test02maps.R.id.action_settings;
 
 public class EmailPasswordAuthentication extends Progress implements
@@ -65,6 +68,8 @@ public class EmailPasswordAuthentication extends Progress implements
     // [START declare_auth]
     private FirebaseAuth mAuth;
     // [END declare_auth]
+
+    private DatabaseReference mDatabaseUsers;
 
     // [START declare_auth_listener]
     private FirebaseAuth.AuthStateListener mAuthListener;
@@ -92,6 +97,8 @@ public class EmailPasswordAuthentication extends Progress implements
         // [START initialize_auth]
         mAuth = FirebaseAuth.getInstance();
         // [END initialize_auth]
+
+        mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("users");
 
         // [START auth_state_listener]
         mAuthListener = new FirebaseAuth.AuthStateListener() {
@@ -342,7 +349,7 @@ public class EmailPasswordAuthentication extends Progress implements
     }
     // [END on_stop_remove_listener]
 
-    private void createAccount(String email, String password) {
+    /*private void createAccount(String email, String password) {
         Log.d(TAG, "createAccount:" + email);
         if (!validateForm()) {
             return;
@@ -375,7 +382,7 @@ public class EmailPasswordAuthentication extends Progress implements
                     }
                 });
         // [END create_user_with_email]
-    }
+    }*/
 
     private void signIn(String email, String password) {
         Log.d(TAG, "signIn:" + email);
@@ -393,8 +400,7 @@ public class EmailPasswordAuthentication extends Progress implements
                         Log.d(TAG, "signInWithEmail:onComplete:" + task.isSuccessful());
 
                         if(task.isSuccessful()) {
-                            Toast.makeText(EmailPasswordAuthentication.this, "Authentication successful",
-                                    Toast.LENGTH_SHORT).show();
+                            checkUserExists();
                         }
                         // If sign in fails, display a message to the user. If sign in succeeds
                         // the auth state listener will be notified and logic to handle the
@@ -416,6 +422,30 @@ public class EmailPasswordAuthentication extends Progress implements
                     }
                 });
         // [END sign_in_with_email]
+    }
+
+    private void checkUserExists() {
+
+        final String user_id = mAuth.getCurrentUser().getUid();
+
+        mDatabaseUsers.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.hasChild(user_id)) {
+
+                    Toast.makeText(EmailPasswordAuthentication.this, "Authentication successful",
+                            Toast.LENGTH_SHORT).show();
+                }else {
+                    Toast.makeText(EmailPasswordAuthentication.this, "Please Register for an Account",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
     }
 
     private void signOut() {
@@ -484,7 +514,9 @@ public class EmailPasswordAuthentication extends Progress implements
     public void onClick(View v) {
         int i = v.getId();
         if (i == R.id.email_create_account_button) {
-            createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            //createAccount(mEmailField.getText().toString(), mPasswordField.getText().toString());
+            Intent intent = new Intent(EmailPasswordAuthentication.this, RegisterAccount.class);
+            startActivity(intent);
         } else if (i == R.id.email_sign_in_button) {
             signIn(mEmailField.getText().toString(), mPasswordField.getText().toString());
         } else if (i == R.id.sign_out_button) {

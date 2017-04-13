@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.MapsAndGeofencing;
 
 import android.Manifest;
 import android.app.PendingIntent;
@@ -18,6 +18,10 @@ import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
 
+import com.example.adamoconnor.test02maps.LoginAndRegister.Progress;
+import com.example.adamoconnor.test02maps.PostingInformationAndComments.AddInformation;
+import com.example.adamoconnor.test02maps.PostingInformationAndComments.InformationFlipActivity;
+import com.example.adamoconnor.test02maps.R;
 import com.google.android.gms.location.LocationListener;
 import android.location.LocationManager;
 import android.net.ConnectivityManager;
@@ -64,7 +68,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.Map;
 
-import static com.example.adamoconnor.test02maps.Constants.LANDMARKS;
 import static com.example.adamoconnor.test02maps.R.id.map;
 
 public class MapsActivity extends Progress
@@ -436,7 +439,7 @@ public class MapsActivity extends Progress
 
         mGoogleMap.clear();
 
-        for (Map.Entry<String, LatLng> entry : LANDMARKS.entrySet()) {
+        for (Map.Entry<String, LatLng> entry : Constants.LANDMARKS.entrySet()) {
 
             CircleOptions circleOptions = new CircleOptions()
                     .center(new LatLng(entry.getValue().latitude,entry.getValue().longitude))

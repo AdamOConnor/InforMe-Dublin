@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.MapsAndGeofencing;
 
 /**
  * Created by Adam O'Connor on 30/01/2017.

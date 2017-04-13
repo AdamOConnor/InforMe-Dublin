@@ -14,22 +14,21 @@
  * limitations under the License.
  */
 
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
 
-import static com.example.adamoconnor.test02maps.Place.setMonumentName;
+import com.example.adamoconnor.test02maps.MapsAndGeofencing.MapsActivity;
+import com.example.adamoconnor.test02maps.R;
+
+import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.setMonumentName;
 
 /**
  * Demonstrates a "card-flip" animation using custom fragment transactions ({@link

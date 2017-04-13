@@ -20,7 +20,7 @@
         android:label="InforMe@Dublin"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <service android:name=".GeofenceTransitionsIntentService" />
+        <service android:name=".MapsAndGeofencing.GeofenceTransitionsIntentService" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
              (See the file "res/values/google_maps_api.xml").
@@ -34,7 +34,7 @@
             android:value="@string/google_maps_key" />
 
         <activity
-            android:name=".EmailPasswordAuthentication"
+            android:name=".LoginAndRegister.EmailPasswordAuthentication"
             android:label="InforMe@Dublin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -43,10 +43,10 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".MapsActivity"
+            android:name=".MapsAndGeofencing.MapsActivity"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <activity
-            android:name=".Information"
+            android:name=".PostingInformationAndComments.Information"
             android:label="Local information" />
         <!--
      ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -56,33 +56,34 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <service android:name=".GeofenceTransitionsIntentService" />
+        <service android:name=".MapsAndGeofencing.GeofenceTransitionsIntentService" />
 
         <activity
-            android:name=".SettingsActivity"
+            android:name=".Settings.SettingsActivity"
             android:label="@string/title_activity_settings">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".EmailPasswordAuthentication" />
+                android:value=".LoginAndRegister.EmailPasswordAuthentication" />
         </activity>
         <activity
-            android:name=".AddInformation"
+            android:name=".PostingInformationAndComments.AddInformation"
             android:label="Submit Proposed Site"
             android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MapsActivity" />
+                android:value=".MapsAndGeofencing.MapsActivity" />
         </activity>
         <activity
-            android:name=".InformationFlipActivity"
+            android:name=".PostingInformationAndComments.InformationFlipActivity"
             android:label="Card Flip"
-            android:parentActivityName=".MapsActivity"
+            android:parentActivityName=".MapsAndGeofencing.MapsActivity"
             android:theme="@style/AppTheme">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".MapsActivity" />
+                android:value=".MapsAndGeofencing.MapsActivity" />
         </activity>
-        <activity android:name=".PostActivity"></activity>
+        <activity android:name=".PostingInformationAndComments.PostActivity"></activity>
+        <activity android:name=".LoginAndRegister.RegisterAccount"></activity>
     </application>
 
 </manifest>

@@ -14,11 +14,12 @@
  * limitations under the License.
  */
 
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.MapsAndGeofencing;
 
 import android.content.Context;
 import android.content.res.Resources;
 
+import com.example.adamoconnor.test02maps.R;
 import com.google.android.gms.location.GeofenceStatusCodes;
 
 /**

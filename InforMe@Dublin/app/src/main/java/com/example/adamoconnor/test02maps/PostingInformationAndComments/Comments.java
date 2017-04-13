@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
 /**
  * Created by Adam O'Connor on 12/04/2017.

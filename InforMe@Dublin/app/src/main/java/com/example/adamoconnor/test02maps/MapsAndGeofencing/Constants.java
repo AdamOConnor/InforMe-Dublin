@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.MapsAndGeofencing;
 
 
 import com.google.android.gms.maps.model.LatLng;

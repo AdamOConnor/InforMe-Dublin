@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
 import android.content.ClipData;
 import android.content.Context;
@@ -19,6 +19,8 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.adamoconnor.test02maps.R;
 
 import java.io.File;
 import java.util.ArrayList;

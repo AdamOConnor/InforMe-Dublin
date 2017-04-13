@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.MapsAndGeofencing;
 
 import android.app.IntentService;
 import android.app.Notification;
@@ -13,6 +13,9 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
+
+import com.example.adamoconnor.test02maps.PostingInformationAndComments.InformationFlipActivity;
+import com.example.adamoconnor.test02maps.R;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;

@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package com.example.adamoconnor.test02maps.Settings;
 
 import android.annotation.TargetApi;
 import android.content.Context;
@@ -17,11 +17,11 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
-import android.util.Log;
 import android.view.MenuItem;
-import java.util.List;
 
-import static android.content.ContentValues.TAG;
+import com.example.adamoconnor.test02maps.R;
+
+import java.util.List;
 
 /**
  * A {@link PreferenceActivity} that presents a set of application settings. On
