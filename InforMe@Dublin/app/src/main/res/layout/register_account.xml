@@ -1,15 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:layout_margin="15dp"
+    android:padding="10dp">
+
+    <ImageButton
+        android:id="@+id/profileSetup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/defaulticon" />
 
     <EditText
         android:id="@+id/nameField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentTop="true"
-        android:layout_margin="15dp"
+        android:layout_below="@+id/profileSetup"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="27dp"
         android:ems="10"
         android:hint="Name"
         android:inputType="textPersonName"
@@ -17,12 +32,13 @@
 
     <EditText
         android:id="@+id/emailField"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/nameField"
-        android:layout_margin="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="16dp"
         android:ems="10"
         android:hint="Email"
         android:inputType="textEmailAddress"
@@ -32,9 +48,11 @@
         android:id="@+id/passwordField"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentStart="true"
         android:layout_below="@+id/emailField"
-        android:layout_margin="15dp"
+        android:layout_centerHorizontal="true"
+        android:layout_marginLeft="15dp"
+        android:layout_marginRight="15dp"
+        android:layout_marginTop="19dp"
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
@@ -42,12 +60,12 @@
 
     <Button
         android:id="@+id/registerButton"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingLeft="60dp"
-        android:paddingRight="60dp"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="137dp"
         android:text="Register"
-        android:theme="@style/ThemeOverlay.MyDarkButton"
-        android:layout_centerVertical="true"
-        android:layout_centerHorizontal="true" />
+        android:theme="@style/ThemeOverlay.MyDarkButton" />
 </RelativeLayout>

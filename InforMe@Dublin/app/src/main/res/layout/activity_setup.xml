@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.adamoconnor.test02maps.LoginAndRegister.SetupActivity">
+
+    <ImageButton
+        android:id="@+id/profileSetup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:background="@android:color/transparent"
+        app:srcCompat="@drawable/defaulticon" />
+
+    <EditText
+        android:id="@+id/nameSetup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentStart="true"
+        android:layout_centerVertical="true"
+        android:layout_margin="15dp"
+        android:ems="10"
+        android:hint="Enter Your Name"
+        android:inputType="textPersonName"
+        android:padding="10dp" />
+
+    <Button
+        android:id="@+id/submitSetup"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="57dp"
+        android:paddingLeft="60dp"
+        android:paddingRight="60dp"
+        android:theme="@style/ThemeOverlay.MyDarkButton"
+        android:text="Setup Account"
+        android:layout_below="@+id/nameSetup"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

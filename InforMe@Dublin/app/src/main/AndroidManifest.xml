@@ -82,8 +82,11 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapsAndGeofencing.MapsActivity" />
         </activity>
-        <activity android:name=".PostingInformationAndComments.PostActivity"></activity>
-        <activity android:name=".LoginAndRegister.RegisterAccount"></activity>
+        <activity android:name=".PostingInformationAndComments.PostActivity" />
+        <activity android:name=".LoginAndRegister.RegisterAccount" />
+        <activity android:name=".LoginAndRegister.SetupActivity"></activity>
+        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat"/>
     </application>
 
 </manifest>
