@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.example.adamoconnor.test02maps">
 
     <!--
@@ -19,7 +20,8 @@
         android:icon="@mipmap/informe_logo_dublin"
         android:label="InforMe@Dublin"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        tools:replace="android:label">
         <service android:name=".MapsAndGeofencing.GeofenceTransitionsIntentService" />
         <!--
              The API key for Google Maps-based APIs is defined as a string resource.
@@ -56,8 +58,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <service android:name=".MapsAndGeofencing.GeofenceTransitionsIntentService" />
-
         <activity
             android:name=".Settings.SettingsActivity"
             android:label="@string/title_activity_settings">
@@ -84,9 +84,11 @@
         </activity>
         <activity android:name=".PostingInformationAndComments.PostActivity" />
         <activity android:name=".LoginAndRegister.RegisterAccount" />
-        <activity android:name=".LoginAndRegister.SetupActivity"></activity>
-        <activity android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
-            android:theme="@style/Base.Theme.AppCompat"/>
+        <activity android:name=".LoginAndRegister.SetupActivity" />
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
+        <activity android:name=".PostingInformationAndComments.CommentsActivity"></activity>
     </application>
 
 </manifest>

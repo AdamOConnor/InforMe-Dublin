@@ -26,6 +26,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -52,6 +53,8 @@ public class PostActivity extends AppCompatActivity {
     private FirebaseUser mCurrentUser;
     private DatabaseReference mDatabaseUsers;
 
+    private DatabaseReference mDatabaseUsersProfilePicture;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,6 +70,8 @@ public class PostActivity extends AppCompatActivity {
         mDatabase = FirebaseDatabase.getInstance().getReference().child("comments").child(getMonumentName());
 
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrentUser.getUid());
+
+        mDatabaseUsersProfilePicture = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrentUser.getUid()).child("image");
 
         selectImage = (ImageButton) findViewById(R.id.imageSelect);
 
@@ -190,25 +195,39 @@ public class PostActivity extends AppCompatActivity {
                         final Uri downloadUrl = taskSnapshot.getDownloadUrl();
                         final DatabaseReference newPost = mDatabase.push();
 
-
-
                         mDatabaseUsers.addValueEventListener(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
+
                                 newPost.child("title").setValue(titleValue);
                                 newPost.child("description").setValue(descriptionValue);
                                 newPost.child("image").setValue(downloadUrl.toString());
                                 newPost.child("uid").setValue(mCurrentUser.getUid());
-                                newPost.child("username").setValue(dataSnapshot.child("name").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                newPost.child("username").setValue(dataSnapshot.child("name").getValue());
+                                newPost.child("timestamp").setValue(ServerValue.TIMESTAMP);
+                                newPost.child("profile").setValue(dataSnapshot.child("image").getValue()).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
 
+                                        new Thread(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                try {
+                                                    Thread.sleep(5000);
+                                                } catch (InterruptedException e) {
+                                                    e.printStackTrace();
+                                                }
+                                            }
+                                        }).start();
+
                                         if(task.isSuccessful()) {
+                                            mProgress.dismiss();
                                             Intent startCommentFragment = new Intent(PostActivity.this, InformationFlipActivity.class);
                                             startCommentFragment.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                                             startActivity(startCommentFragment);
                                         }
                                         else {
+                                            mProgress.dismiss();
                                             Toast.makeText(PostActivity.this, "OOps looks like something went wrong, please check internet connection ...",
                                                     Toast.LENGTH_LONG).show();
                                         }
@@ -232,8 +251,6 @@ public class PostActivity extends AppCompatActivity {
 
         @Override
         protected void onPostExecute(String result) {
-
-            mProgress.dismiss();
 
             super.onPostExecute(result);
 
