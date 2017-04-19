@@ -4,8 +4,7 @@ import android.app.Fragment;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.nfc.Tag;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -18,7 +17,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.adamoconnor.test02maps.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
@@ -29,19 +27,13 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.like.LikeButton;
-import com.like.OnLikeListener;
 import com.squareup.picasso.Picasso;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-
-
 import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.getMonumentName;
 
-/**
- * Created by Adam O'Connor on 10/04/2017.
- */
 
 public class InformationBackCommentsFragment extends Fragment {
 
@@ -104,6 +96,7 @@ public class InformationBackCommentsFragment extends Fragment {
 
                         Intent viewComments = new Intent(getActivity(), CommentsActivity.class);
                         viewComments.putExtra("post_id", post_key);
+                        viewComments.putExtra("location_id", getMonumentName());
                         startActivity(viewComments);
 
 
@@ -126,12 +119,10 @@ public class InformationBackCommentsFragment extends Fragment {
 
                                         viewHolder.likeButton.setLiked(false);
                                         mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).removeValue();
-                                        Log.d("MainClass", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!REMOVE");
                                         mValueLike = false;
                                     } else {
                                         viewHolder.likeButton.setLiked(true);
                                         mDatabaseLike.child(post_key).child(mAuth.getCurrentUser().getUid()).setValue("random");
-                                        Log.d("MainClass", "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!ADD");
                                         mValueLike = false;
                                     }
                                 }
@@ -152,10 +143,16 @@ public class InformationBackCommentsFragment extends Fragment {
 
     }
 
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        //here you can handle orientation change
+    }
+
     public static class CommentHolder extends RecyclerView.ViewHolder {
 
         View mView;
-        TextView post_title;
+        TextView post_NumLikes;
         DatabaseReference mDatabaseLikes;
         FirebaseAuth mAuth;
         LikeButton likeButton;
@@ -165,6 +162,7 @@ public class InformationBackCommentsFragment extends Fragment {
 
             mView = itemView;
 
+            post_NumLikes = (TextView) mView.findViewById(R.id.commentThumbsUp);
             likeButton = (LikeButton) mView.findViewById(R.id.commentLike);
 
             mDatabaseLikes = FirebaseDatabase.getInstance().getReference().child("likes");
@@ -178,6 +176,9 @@ public class InformationBackCommentsFragment extends Fragment {
             mDatabaseLikes.addValueEventListener(new ValueEventListener() {
                 @Override
                 public void onDataChange(DataSnapshot dataSnapshot) {
+                    int numOfLikes = (int) dataSnapshot.child(post_key).getChildrenCount();
+
+                    post_NumLikes.setText("Likes - "+numOfLikes);
 
                     if(dataSnapshot.child(post_key).hasChild(mAuth.getCurrentUser().getUid())) {
                         likeButton.setLiked(true);

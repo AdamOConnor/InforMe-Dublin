@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -9,11 +10,13 @@
     <ImageButton
         android:id="@+id/imageSelect"
         android:layout_width="match_parent"
-        android:layout_height="275dp"
+        android:layout_height="220dp"
         android:layout_alignParentStart="true"
         android:background="?android:attr/colorBackground"
         android:scaleType="fitCenter"
-        app:srcCompat="@drawable/add_btn" />
+        app:srcCompat="@drawable/add_btn"
+        android:contentDescription=""
+        tools:ignore="ContentDescription" />
 
     <EditText
         android:id="@+id/title"
@@ -29,7 +32,8 @@
         android:hint="Post Title ..."
         android:inputType="textPersonName"
         android:padding="15dp"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        tools:ignore="HardcodedText" />
 
     <EditText
         android:id="@+id/description"
@@ -45,7 +49,8 @@
         android:hint="Post Description"
         android:inputType="textMultiLine"
         android:padding="15dp"
-        android:textSize="15sp" />
+        android:textSize="15sp"
+        tools:ignore="HardcodedText" />
 
     <Button
         android:id="@+id/submitButton"
@@ -54,8 +59,9 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_weight="0.77"
-        android:text="Submit Post"
+        android:text="@string/submit_post"
         android:textSize="15sp"
-        android:theme="@style/ThemeOverlay.MyDarkButton" />
+        android:theme="@style/ThemeOverlay.MyDarkButton"
+        tools:ignore="ObsoleteLayoutParam" />
 
 </RelativeLayout>

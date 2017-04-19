@@ -62,6 +62,8 @@ import java.util.Locale;
 
 import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Constants.LANDMARKS;
 import static com.example.adamoconnor.test02maps.R.id.action_settings;
+import static com.example.adamoconnor.test02maps.R.id.resetPassword;
+import static com.example.adamoconnor.test02maps.R.id.settings_prefs;
 
 public class EmailPasswordAuthentication extends Progress implements
         View.OnClickListener {
@@ -72,6 +74,7 @@ public class EmailPasswordAuthentication extends Progress implements
     private EditText mEmailField;
     private EditText mPasswordField;
     private String mState = null; // setting state
+    private String userState = null;
     private SignInButton mGoogleLogin;
 
 
@@ -317,68 +320,26 @@ public class EmailPasswordAuthentication extends Progress implements
 
     }
 
-    public void forgottenPassword() {
-
-        FirebaseAuth auth = FirebaseAuth.getInstance();
-        final String emailAddress = String.valueOf(mEmailField.getText());
-        android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches();
-
-        if(emailAddress != null && android.util.Patterns.EMAIL_ADDRESS.matcher(emailAddress).matches()) {
-            auth.sendPasswordResetEmail(emailAddress)
-                    .addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                new AlertDialog.Builder(EmailPasswordAuthentication.this)
-                                        .setTitle("Password Reset")
-                                        .setMessage("An Email has been sent to the following email address "+emailAddress)
-                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-
-
-                                            }
-                                        })
-                                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                                            public void onClick(DialogInterface dialog, int which) {
-                                                // do nothing
-                                            }
-                                        })
-                                        .setIcon(R.drawable.informe4)
-                                        .show();
-                            }
-                        }
-                    });
-        }
-        else {
-            new AlertDialog.Builder(EmailPasswordAuthentication.this)
-                    .setTitle("Email Address")
-                    .setMessage("Please enter a valid email address")
-                    .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-
-
-                        }
-                    })
-                    .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            // do nothing
-                        }
-                    })
-                    .setIcon(R.drawable.informe4)
-                    .show();
-        }
-    }
-
     // creating an options menu for settings page
     public boolean onOptionsItemSelected(MenuItem item) {
 
         int id = item.getItemId();
 
-        if(id == action_settings) {
-            Intent intent = new Intent(this,SettingsActivity.class);
+        if(id == resetPassword) {
+
+            Intent intent = new Intent(this, ResetActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
             startActivity(intent);
             return true;
+
+        }
+        if(id == settings_prefs) {
+
+            Intent intent = new Intent(this, SettingsActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(intent);
+            return true;
+
         }
         return false;
     }
@@ -386,13 +347,24 @@ public class EmailPasswordAuthentication extends Progress implements
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.settings, menu);
 
-        if (mState == "HIDE_MENU")
-        {
+
+        if (mState == "show") {
             for (int i = 0; i < menu.size(); i++)
                 menu.getItem(i).setVisible(false);
+            inflater.inflate(R.menu.pref_custom, menu);
+            for (int i = 0; i < menu.size(); i++)
+                menu.getItem(i).setVisible(true);
         }
+        if(userState == "SHOWUSER_SETTINGS") {
+            for (int i = 0; i < menu.size(); i++)
+                menu.getItem(i).setVisible(false);
+            inflater.inflate(R.menu.settings_custom, menu);
+            for (int i = 0; i < menu.size(); i++)
+                menu.getItem(i).setVisible(true);
+        }
+
+
         return true;
     }
 
@@ -567,6 +539,7 @@ public class EmailPasswordAuthentication extends Progress implements
 
             addGeofences();
             mState = "show";
+            userState = "HIDE_MENU";
             invalidateOptionsMenu();
 
             findViewById(R.id.email_password_buttons).setVisibility(View.GONE);
@@ -578,7 +551,10 @@ public class EmailPasswordAuthentication extends Progress implements
         } else {
             mStatusTextView.setText(R.string.signed_out);
 
+
             mState = "HIDE_MENU";
+            userState = "SHOWUSER_SETTINGS";
+
             invalidateOptionsMenu();
 
             findViewById(R.id.email_password_buttons).setVisibility(View.VISIBLE);

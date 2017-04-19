@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context="com.example.adamoconnor.test02maps.LoginAndRegister.ResetActivity">
+
+    <EditText
+        android:id="@+id/mEmailField"
+        style="@android:style/Widget.DeviceDefault.EditText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true"
+        android:layout_margin="30dp"
+        android:background="@drawable/input_outline"
+        android:ems="10"
+        android:hint="Email Address"
+        android:inputType=""
+        android:padding="15dp"
+        android:textSize="16sp"
+        tools:ignore="HardcodedText,LabelFor,RelativeOverlap,TextFields" />
+
+    <Button
+        android:id="@+id/resetButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/mEmailField"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp"
+        android:elevation="0dp"
+        android:text="@string/reset_password_activity"
+        android:textAlignment="center"
+        android:textSize="16sp"
+        android:theme="@style/ThemeOverlay.MyDarkButton"
+        android:visibility="visible"
+        tools:ignore="ButtonStyle" />
+
+</RelativeLayout>

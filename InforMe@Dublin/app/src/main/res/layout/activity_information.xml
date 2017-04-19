@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:ext="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:screenOrientation="portrait"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:weightSum="1">
@@ -47,16 +47,23 @@
             android:onClick="TextToSpeech" />
 
     </android.support.v7.widget.CardView>
-    <com.bluejamesbond.text.DocumentView
-        android:id="@+id/informationText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="18dp"
-        android:layout_marginRight="10dp"
-        ext:documentView_textAlignment="justified"
-        ext:documentView_textColor="@android:color/darker_gray"
-        ext:documentView_textFormat="plain"
-        ext:documentView_textSize="16sp"
-        ext:documentView_insetPaddingLeft="0dp"
-        ext:documentView_insetPaddingRight="5dp"/>
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:id="@+id/informationTextScroll"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <me.biubiubiu.justifytext.library.JustifyTextView
+            android:id="@+id/informationText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="3dp"
+            android:layout_marginTop="3dp"
+            android:padding="10dp"
+            android:textSize="16sp"
+            tools:ignore="RtlHardcoded" />
+
+    </ScrollView>
+
 </LinearLayout>

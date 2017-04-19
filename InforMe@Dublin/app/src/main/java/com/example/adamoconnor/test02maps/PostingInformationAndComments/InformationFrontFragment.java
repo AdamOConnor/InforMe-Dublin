@@ -2,8 +2,10 @@ package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,8 +13,6 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import com.bluejamesbond.text.DocumentView;
 import com.daimajia.slider.library.Animations.DescriptionAnimation;
 import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
@@ -38,13 +38,14 @@ import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.getMonu
 public class InformationFrontFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 
     private TextToSpeech repeatText;
-    private DocumentView information;
+    private TextView information;
     private TextView title;
     private ImageButton listenButton;
     private SliderLayout sliderLayout;
     private HashMap<String,String> Hash_file_maps ;
     private String monumentName = null;
     private ProgressDialog infoProgress;
+    private DatabaseReference database;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -53,11 +54,14 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
         Place activity = new Place();
         monumentName = activity.getMonumentName();
 
+        database = FirebaseDatabase.getInstance().getReference();
+        database.keepSynced(true);
+
         View view = inflater.inflate(R.layout.activity_information, container, false);
 
         listenButton = (ImageButton)view.findViewById(R.id.informationListen);
         listenButton.setImageResource(R.drawable.soundicon);
-        information = (DocumentView)view.findViewById(R.id.informationText);
+        information = (TextView)view.findViewById(R.id.informationText);
         title = (TextView)view.findViewById(R.id.title);
         sliderLayout = (SliderLayout)view.findViewById(R.id.slider);
 
@@ -93,6 +97,13 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
     }
 
     @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        //here you can handle orientation change
+
+    }
+
+    @Override
     public void onPause() {
         // TODO Auto-generated method stub
 
@@ -123,7 +134,7 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
     private void ConvertTextToSpeech() {
         // TODO Auto-generated method stub
         String text = information.getText().toString();
-        if(text==null||"".equals(text))
+        if(!TextUtils.isEmpty(text))
         {
             repeatText.speak(text, TextToSpeech.QUEUE_FLUSH, null);
             listenButton.setImageResource(R.drawable.soundicon);
@@ -135,11 +146,12 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
 
     private void LoadData() {
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         DatabaseReference myRef = database.child("ruin");
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+
+                informationImages();
 
                 try {
 
@@ -148,10 +160,10 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
                     String regex = "\\[|\\]";
                     info = info.replaceAll(regex, "");
                     information.setText(info);
-                    informationImages();
+
 
                 } catch(NullPointerException ex) {
-
+                    LoadData();
                 }
 
 
@@ -166,10 +178,9 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
 
     public void informationImages() {
 
-        DatabaseReference database = FirebaseDatabase.getInstance().getReference();
         // pass the name of the monument
         DatabaseReference myRef = database.child("images").child(getMonumentName().trim());
-        myRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot alerts) {
 

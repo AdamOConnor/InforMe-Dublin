@@ -18,6 +18,8 @@ package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
 import android.app.FragmentManager;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.NavUtils;
@@ -55,6 +57,8 @@ public class InformationFlipActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_flip);
+
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         Bundle extras = null;
         if (savedInstanceState == null) {
@@ -102,6 +106,12 @@ public class InformationFlipActivity extends AppCompatActivity
 
         }
 
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+        //here you can handle orientation change
     }
 
     @Override
@@ -204,15 +214,5 @@ public class InformationFlipActivity extends AppCompatActivity
         super.onPause();  // Always call the superclass method first
 
     }
-
-
-    /**
-     * A fragment representing the front of the card.
-     */
-
-
-    /**
-     * A fragment representing the back of the card.
-     */
 
 }

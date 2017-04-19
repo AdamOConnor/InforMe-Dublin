@@ -8,4 +8,12 @@
     <string name="areasendinfo">Area :</string>
     <string name="locationsendinfo">Location :</string>
     <string name="monument_namesendinfo">Monument Name :</string>
+    <string name="monument_description">Monument Description</string>
+    <string name="monument_information">Monument Information :</string>
+    <string name="select_images">Select Images</string>
+    <string name="send_information">Send Information</string>
+    <string name="submit_post">Submit Post</string>
+    <string name="remove_post">Remove Post</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="settings">settings</string>
 </resources>

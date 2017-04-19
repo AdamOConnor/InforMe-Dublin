@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:screenOrientation="portrait"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -10,13 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingTop="2dp">
+        android:paddingTop="2dp"
+        android:weightSum="1"
+        tools:ignore="UselessParent">
 
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="45dp"
             android:padding="2dp"
-            android:paddingLeft="5dp">
+            android:paddingLeft="5dp"
+            tools:ignore="RtlHardcoded,RtlSymmetry">
 
             <de.hdodenhof.circleimageview.CircleImageView
                 android:id="@+id/commentProfile"
@@ -32,9 +36,10 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentEnd="true"
                 android:layout_centerVertical="true"
-                android:text="date and time"
+                android:text="@string/date_and_time"
                 android:textSize="12sp"
-                android:textStyle="italic" />
+                android:textStyle="italic"
+                tools:ignore="RelativeOverlap" />
 
             <TextView
                 android:id="@+id/commentUsername"
@@ -43,7 +48,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toEndOf="@+id/commentProfile"
                 android:paddingLeft="5dp"
-                android:text="username"
+                android:text="@string/username"
                 android:textSize="12sp"
                 android:textStyle="bold|italic" />
 
@@ -62,7 +67,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="15dp"
-            android:text="Post Title ..."
+            android:text="@string/post_title"
             android:textSize="16sp"
             android:textStyle="bold" />
 
@@ -73,8 +78,17 @@
             android:paddingBottom="15dp"
             android:paddingLeft="15dp"
             android:paddingRight="15dp"
-            android:text="Post Description . . ."
-            android:textSize="16sp" />
+            android:text="@string/post_description"
+            android:textSize="16sp"
+            android:layout_weight="0.96"
+            tools:ignore="InefficientWeight" />
+
+        <Button
+            android:id="@+id/commentRemove"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/remove_post"
+            android:visibility="gone" />
 
     </LinearLayout>
 

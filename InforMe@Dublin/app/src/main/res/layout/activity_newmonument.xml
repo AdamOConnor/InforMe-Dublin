@@ -7,27 +7,30 @@
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="18dp"
-        android:text="@string/monument_namesendinfo"
-        android:textSize="15sp"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true" />
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="25dp"
+        android:text="@string/monument_namesendinfo"
+        android:textSize="15sp" />
 
     <EditText
         android:id="@+id/monumentName"
         style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/textView"
+        android:layout_alignBottom="@+id/textView"
+        android:layout_marginStart="25dp"
+        android:layout_marginTop="25dp"
+        android:layout_toEndOf="@+id/textView"
+        android:background="@drawable/input_outline"
         android:ems="10"
         android:hint="Monument"
         android:inputType="textPersonName|textFilter"
+        android:padding="15dp"
         android:textSize="15sp"
-        tools:ignore="HardcodedText,LabelFor,RelativeOverlap"
-        android:layout_marginStart="35dp"
-        android:layout_alignBaseline="@+id/textView"
-        android:layout_alignBottom="@+id/textView"
-        android:layout_toEndOf="@+id/textView" />
+        tools:ignore="HardcodedText,LabelFor,RelativeOverlap" />
 
     <TextView
         android:id="@+id/Location"
@@ -35,7 +38,7 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/textView"
         android:layout_below="@+id/monumentName"
-        android:layout_marginTop="22dp"
+        android:layout_marginTop="25dp"
         android:text="@string/locationsendinfo"
         android:textSize="15sp" />
 
@@ -43,13 +46,15 @@
         android:id="@+id/locationSpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:dropDownWidth="wrap_content"
-        android:visibility="visible"
-        android:entries="@array/items"
         android:layout_alignBaseline="@+id/Location"
         android:layout_alignBottom="@+id/Location"
+        android:layout_alignEnd="@+id/monumentName"
         android:layout_alignStart="@+id/monumentName"
-        android:layout_alignEnd="@+id/monumentName" />
+        android:layout_marginTop="25dp"
+        android:dropDownWidth="wrap_content"
+        android:entries="@array/items"
+        android:padding="15dp"
+        android:visibility="visible" />
 
     <TextView
         android:id="@+id/areaText"
@@ -57,7 +62,7 @@
         android:layout_height="wrap_content"
         android:layout_alignEnd="@+id/Location"
         android:layout_below="@+id/Location"
-        android:layout_marginTop="31dp"
+        android:layout_marginTop="40dp"
         android:text="@string/areasendinfo"
         android:textSize="15sp" />
 
@@ -65,41 +70,45 @@
         android:id="@+id/area"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="Area "
-        android:inputType="textPersonName"
-        android:textSize="15sp"
         android:layout_alignBaseline="@+id/areaText"
         android:layout_alignBottom="@+id/areaText"
         android:layout_alignStart="@+id/locationSpinner"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/input_outline"
+        android:ems="10"
+        android:hint="Area "
+        android:inputType="textPersonName"
+        android:padding="15dp"
+        android:textSize="15sp"
         tools:ignore="HardcodedText" />
 
     <EditText
         android:id="@+id/monumentInformation"
-        android:layout_width="fill_parent"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignEnd="@+id/area"
-        android:layout_alignStart="@+id/galleryButton"
-        android:layout_below="@+id/area"
-        android:layout_marginTop="68dp"
-        android:gravity="top|left"
+        android:layout_alignStart="@+id/resetButton"
+        android:layout_below="@+id/historyHeading"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/input_outline"
+        android:ems="10"
+        android:hint="@string/monument_description"
         android:inputType="textMultiLine"
-        android:lines="15"
-        android:maxLines="20"
-        android:minLines="6"
-        android:scrollbars="vertical"
-        android:textSize="15sp"
-        tools:ignore="LabelFor,RtlHardcoded" />
+        android:maxLines="10"
+        android:padding="15dp"
+        android:textSize="15sp" />
+
 
     <Button
         android:id="@+id/submitButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBaseline="@+id/galleryButton"
-        android:layout_alignBottom="@+id/galleryButton"
+        android:layout_alignBaseline="@+id/resetButton"
+        android:layout_alignBottom="@+id/resetButton"
         android:layout_alignEnd="@+id/monumentInformation"
         android:elevation="0dp"
-        android:text="Send Information"
+        android:text="@string/send_information"
         android:textAlignment="center"
         android:textSize="14sp"
         android:theme="@style/ThemeOverlay.MyDarkButton"
@@ -107,7 +116,7 @@
         tools:ignore="ButtonStyle" />
 
     <Button
-        android:id="@+id/galleryButton"
+        android:id="@+id/resetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
@@ -115,7 +124,7 @@
         android:layout_marginBottom="33dp"
         android:layout_toStartOf="@+id/area"
         android:elevation="0dp"
-        android:text="Select Images"
+        android:text="@string/select_images"
         android:textAlignment="center"
         android:textSize="14sp"
         android:theme="@style/ThemeOverlay.MyDarkButton"
@@ -127,7 +136,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="29dp"
-        android:text="Monument Information : "
+        android:text="@string/monument_information"
         android:textSize="15sp"
         android:layout_below="@+id/area"
         android:layout_alignStart="@+id/monumentInformation" />

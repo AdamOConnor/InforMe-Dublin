@@ -1,23 +1,19 @@
 package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
 import android.content.ClipData;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
-import android.nfc.Tag;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.adamoconnor.test02maps.R;
@@ -40,7 +36,7 @@ public class AddInformation extends AppCompatActivity {
         setContentView(R.layout.activity_newmonument);
         setupActionBar();
 
-        Button gallery = (Button)findViewById(R.id.galleryButton);
+        Button gallery = (Button)findViewById(R.id.resetButton);
         Button sendEmail = (Button)findViewById(R.id.submitButton);
         final EditText monumentName = (EditText)findViewById(R.id.monumentName);
         final Spinner location = (Spinner)findViewById(R.id.locationSpinner);
@@ -105,7 +101,7 @@ public class AddInformation extends AppCompatActivity {
                 // Get the Image from data
 
                 String[] filePathColumn = { MediaStore.Images.Media.DATA };
-                imagesEncodedList = new ArrayList<String>();
+                imagesEncodedList = new ArrayList<>();
                 if(data.getData()!=null){
 
                     Uri mImageUri=data.getData();
@@ -123,7 +119,7 @@ public class AddInformation extends AppCompatActivity {
                 }else {
                     if (data.getClipData() != null) {
                         ClipData mClipData = data.getClipData();
-                        ArrayList<Uri> mArrayUri = new ArrayList<Uri>();
+                        ArrayList<Uri> mArrayUri = new ArrayList<>();
                         for (int i = 0; i < mClipData.getItemCount(); i++) {
 
                             ClipData.Item item = mClipData.getItemAt(i);
@@ -176,7 +172,7 @@ public class AddInformation extends AppCompatActivity {
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);
         //has to be an ArrayList
-        ArrayList<Uri> uris = new ArrayList<Uri>();
+        ArrayList<Uri> uris = new ArrayList<>();
         //convert from paths to Android friendly Parcelable Uri's
         try {
             for (String file : imagesEncodedList)
@@ -186,7 +182,7 @@ public class AddInformation extends AppCompatActivity {
                 uris.add(u);
             }
         } catch (NullPointerException ex) {
-
+            ex.getStackTrace();
         }
 
         emailIntent.putParcelableArrayListExtra(Intent.EXTRA_STREAM, uris);

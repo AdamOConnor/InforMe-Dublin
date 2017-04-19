@@ -121,6 +121,19 @@
     <string name="lorem_ipsum">![CDATA[Lorem ipsum dolor sit amet, consectetur adipiscing elit. Mauris et magna ut erat elementum cursus</string>
     <string name="action_info">Photo info</string>
     <string name="action_photo">View photo</string>
+    <string name="monument_description">Monument Description</string>
+    <string name="monument_information">Monument Information :</string>
+    <string name="select_images">Select Images</string>
+    <string name="send_information">Send Information</string>
+    <string name="submit_post">Submit Post</string>
+    <string name="remove_post">Remove Post</string>
+    <string name="post_description">Post Description . . .</string>
+    <string name="post_title">Post Title ...</string>
+    <string name="date_and_time">date and time</string>
+    <string name="username">username</string>
+    <string name="reset_password">Reset Password</string>
+    <string name="settings">settings</string>
+    <string name="reset_password_activity">reset password</string>
 
 </resources>
 

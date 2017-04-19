@@ -105,11 +105,10 @@ public class RegisterAccount extends Progress {
         final String email = mEmailField.getText().toString().trim();
         final String password = mPasswordField.getText().toString().trim();
 
+        validateForm();
+
         if(mImageUri != null) {
 
-            if (!TextUtils.isEmpty(name) && !TextUtils.isEmpty(email) && !TextUtils.isEmpty(password)) {
-
-                Log.d(TAG, "!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!1:"+email+password);
                 // [START create_user_with_email]
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
@@ -163,8 +162,7 @@ public class RegisterAccount extends Progress {
                                 // [END_EXCLUDE]
                             }
                         });
-            }
-        }else {
+        } else {
             Toast.makeText(RegisterAccount.this, "Please select an Image for your profile.",
                     Toast.LENGTH_SHORT).show();
         }
@@ -180,6 +178,37 @@ public class RegisterAccount extends Progress {
             randomStringBuilder.append(tempChar);
         }
         return randomStringBuilder.toString();
+    }
+
+    private boolean validateForm() {
+        boolean valid = true;
+
+        String email = mEmailField.getText().toString();
+        if (TextUtils.isEmpty(email)) {
+            mEmailField.setError("Required.");
+            valid = false;
+        } else {
+            mEmailField.setError(null);
+        }
+
+        String name = mNameField.getText().toString();
+        if (TextUtils.isEmpty(name)) {
+            mNameField.setError("Required.");
+            valid = false;
+        } else {
+            mNameField.setError(null);
+        }
+
+
+        String password = mPasswordField.getText().toString();
+        if (TextUtils.isEmpty(password)) {
+            mPasswordField.setError("Required.");
+            valid = false;
+        } else {
+            mPasswordField.setError(null);
+        }
+
+        return valid;
     }
 
     @Override
