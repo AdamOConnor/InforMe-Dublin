@@ -6,7 +6,7 @@
 
     <color name="grey_100">#F5F5F5</color>
     <color name="grey_300">#E0E0E0</color>
-    <color name="TransparetFocus">#aa4fe83d</color>
+    <color name="TransparetFocus">#cb18ff00</color>
     <color name="TransparetNonFocus">#aafc5137</color>
     <color name="Geofence">#5777ccc1</color>
     <color name="transparentgray">#d5908a8a</color>

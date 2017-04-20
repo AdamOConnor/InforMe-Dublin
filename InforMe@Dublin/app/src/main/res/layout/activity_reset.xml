@@ -10,30 +10,32 @@
         style="@android:style/Widget.DeviceDefault.EditText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentTop="true"
-        android:layout_centerHorizontal="true"
-        android:layout_margin="30dp"
         android:background="@drawable/input_outline"
         android:ems="10"
         android:hint="Email Address"
         android:inputType=""
         android:padding="15dp"
         android:textSize="16sp"
-        tools:ignore="HardcodedText,LabelFor,RelativeOverlap,TextFields" />
+        tools:ignore="HardcodedText,LabelFor,RelativeOverlap,TextFields"
+        android:layout_marginLeft="30dp"
+        android:layout_marginRight="30dp"
+        android:layout_marginTop="87dp"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
 
     <Button
         android:id="@+id/resetButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/mEmailField"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="40dp"
         android:elevation="0dp"
         android:text="@string/reset_password_activity"
         android:textAlignment="center"
         android:textSize="16sp"
         android:theme="@style/ThemeOverlay.MyDarkButton"
         android:visibility="visible"
-        tools:ignore="ButtonStyle" />
+        tools:ignore="ButtonStyle"
+        android:layout_below="@+id/mEmailField"
+        android:layout_centerHorizontal="true"
+        android:layout_marginTop="40dp" />
 
 </RelativeLayout>

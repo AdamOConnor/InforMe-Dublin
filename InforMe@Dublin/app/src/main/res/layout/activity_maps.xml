@@ -21,7 +21,7 @@
         android:layout_marginBottom="29dp"
         android:clickable="true"
         app:backgroundTint="#dcc0c0c0"
-        app:srcCompat="@drawable/informe"
+        app:srcCompat="@drawable/addfences"
         android:layout_alignParentBottom="true"
         android:layout_alignParentStart="true"
         android:layout_marginStart="10dp" />
@@ -35,12 +35,12 @@
         android:layout_marginEnd="11dp"
         android:layout_marginTop="10dp"
         android:backgroundTint="@color/TransparetFocus"
-        android:drawableTop="@drawable/focus1"
+        android:drawableTop="@drawable/homebutton"
         android:gravity="center"
         android:soundEffectsEnabled="true"
         android:textOff=""
         android:textOn=""
-        android:textSize="0dp" />
+        android:textSize="0sp" />
 
 </RelativeLayout>
 

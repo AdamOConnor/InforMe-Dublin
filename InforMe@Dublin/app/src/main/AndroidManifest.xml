@@ -47,6 +47,8 @@
         </activity>
         <activity
             android:name=".MapsAndGeofencing.MapsActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:screenOrientation="portrait"
             android:windowSoftInputMode="stateAlwaysHidden" />
         <!--
      ATTENTION: This was auto-generated to add Google Play services to your project for
@@ -66,7 +68,7 @@
         <activity
             android:name=".PostingInformationAndComments.AddInformation"
             android:label="Submit Proposed Site"
-            android:windowSoftInputMode="adjustNothing">
+            android:windowSoftInputMode="adjustPan">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".MapsAndGeofencing.MapsActivity" />
@@ -84,18 +86,25 @@
         </activity>
         <activity
             android:name=".PostingInformationAndComments.PostActivity"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan" />
         <activity
             android:name=".LoginAndRegister.RegisterAccount"
-            android:windowSoftInputMode="adjustResize" />
+            android:windowSoftInputMode="adjustPan" />
         <activity android:name=".LoginAndRegister.SetupActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
         <activity
             android:name=".PostingInformationAndComments.CommentsActivity"
-            android:windowSoftInputMode="adjustResize" />
-        <activity android:name=".LoginAndRegister.ResetActivity"></activity>
+            android:windowSoftInputMode="adjustPan" />
+        <activity
+            android:name=".LoginAndRegister.ResetActivity"
+            android:label="Reset Password">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".LoginAndRegister.EmailPasswordAuthentication" />
+        </activity>
+        <activity android:name=".PostingInformationAndComments.UpdateActivity"></activity>
     </application>
 
 </manifest>

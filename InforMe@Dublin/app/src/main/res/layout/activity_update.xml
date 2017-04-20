@@ -64,38 +64,35 @@
             app:srcCompat="@drawable/add_btn"
             tools:ignore="ContentDescription" />
 
-        <TextView
+        <EditText
             android:id="@+id/commentTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/input_outline"
             android:padding="15dp"
             android:text="@string/post_title"
             android:textSize="16sp"
             android:textStyle="bold" />
 
-        <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:id="@+id/informationTextScroll"
+        <EditText
+            android:id="@+id/description"
             android:layout_width="match_parent"
-            android:layout_height="140dp"
-            android:fillViewport="false">
-
-            <me.biubiubiu.justifytext.library.JustifyTextView
-                android:id="@+id/commentDescription"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_marginLeft="3dp"
-                android:layout_marginTop="3dp"
-                android:layout_weight="0.96"
-                android:padding="10dp"
-                android:paddingBottom="15dp"
-                android:paddingLeft="15dp"
-                android:paddingRight="15dp"
-                android:text="@string/post_description"
-                android:textSize="16sp"
-                tools:ignore="InefficientWeight" />
-
-        </ScrollView>
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/title"
+            android:layout_centerHorizontal="true"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/input_outline"
+            android:ems="10"
+            android:hint="Post Description"
+            android:inputType="textMultiLine"
+            android:padding="15dp"
+            android:textSize="15sp"
+            tools:ignore="HardcodedText" />
 
     </LinearLayout>
 

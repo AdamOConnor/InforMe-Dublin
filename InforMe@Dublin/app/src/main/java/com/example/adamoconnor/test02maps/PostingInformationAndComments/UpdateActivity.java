@@ -1,34 +1,34 @@
 package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.example.adamoconnor.test02maps.R;
-import com.google.android.gms.vision.text.Text;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ServerValue;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.getMonumentName;
-
-public class CommentsActivity extends AppCompatActivity {
+public class UpdateActivity extends AppCompatActivity {
 
     private String mPost_key = null;
     private String mLocation_key = null;
@@ -37,22 +37,20 @@ public class CommentsActivity extends AppCompatActivity {
     private DatabaseReference mDatabase;
 
     private ImageView postImage;
-    private TextView postTitle;
-    private TextView postDescription;
+    private EditText postTitle;
+    private EditText postDescription;
     private TextView postTimestamp;
     private TextView postUsername;
     private CircleImageView postProfile;
-    private Button postRemove;
     private Button postUpdate;
 
+    private ProgressDialog mProgress;
     private FirebaseAuth mAuth;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_comments);
+        setContentView(R.layout.activity_update);
 
         mPost_key = getIntent().getExtras().getString("post_id");
         mLocation_key = getIntent().getExtras().getString("location_id");
@@ -65,10 +63,9 @@ public class CommentsActivity extends AppCompatActivity {
         postTimestamp = (TextView) findViewById(R.id.commentTime);
 
         postImage = (ImageView) findViewById(R.id.commentImage);
-        postTitle = (TextView) findViewById(R.id.commentTitle);
-        postDescription = (TextView) findViewById(R.id.commentDescription);
+        postTitle = (EditText) findViewById(R.id.commentTitle);
+        postDescription = (EditText) findViewById(R.id.commentDescription);
 
-        postRemove = (Button) findViewById(R.id.commentRemove);
         postUpdate = (Button) findViewById(R.id.updatePost);
 
         mDatabase.child(mPost_key).addValueEventListener(new ValueEventListener() {
@@ -97,17 +94,10 @@ public class CommentsActivity extends AppCompatActivity {
                 }
 
 
-                Picasso.with(CommentsActivity.this).load(post_image).resize(1200,750).into(postImage);
-                Picasso.with(CommentsActivity.this).load(post_profile)
+                Picasso.with(UpdateActivity.this).load(post_image).resize(1200,750).into(postImage);
+                Picasso.with(UpdateActivity.this).load(post_profile)
                         .placeholder(R.drawable.defaulticon).error(R.drawable.defaulticon)
                         .into(postProfile);
-
-                if(mAuth.getCurrentUser().getUid().equals(post_uid)) {
-
-                    postRemove.setVisibility(View.VISIBLE);
-                    postUpdate.setVisibility(View.VISIBLE);
-
-                }
 
             }
 
@@ -117,32 +107,55 @@ public class CommentsActivity extends AppCompatActivity {
             }
         });
 
-        postRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
 
+        postUpdate.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mProgress = new ProgressDialog(UpdateActivity.this);
+                mProgress.setMessage("Processing Request...");
+                mProgress.setIndeterminate(false);
+                mProgress.setCancelable(false);
+                mProgress.show();
                 if(mAuth.getCurrentUser().getUid().equals(post_uid)) {
 
-                    mDatabase.child(mPost_key).removeValue();
+                    mDatabase.child(mPost_key).addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
 
-                    Intent InformationIntent = new Intent(CommentsActivity.this, InformationFlipActivity.class);
-                    InformationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    InformationIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(InformationIntent);
+                            dataSnapshot.getRef().child("title").setValue(postTitle.getText().toString().trim());
+                            dataSnapshot.getRef().child("description").setValue(postDescription.getText().toString().trim());
+                            dataSnapshot.getRef().child("timestamp").setValue(ServerValue.TIMESTAMP).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+
+                                    if(task.isSuccessful()) {
+                                        mProgress.dismiss();
+                                        Intent startCommentFragment = new Intent(UpdateActivity.this, InformationFlipActivity.class);
+                                        startCommentFragment.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                        startActivity(startCommentFragment);
+                                    }
+                                    else {
+                                        mProgress.dismiss();
+                                        Toast.makeText(UpdateActivity.this, "OOps looks like something went wrong, please check internet connection ...",
+                                                Toast.LENGTH_LONG).show();
+                                    }
+                                }
+                            });
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+
 
                 }
 
             }
         });
 
-        postUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent InformationIntent = new Intent(CommentsActivity.this, UpdateActivity.class);
-                InformationIntent.putExtra("post_id", mPost_key);
-                InformationIntent.putExtra("location_id", mLocation_key);
-                startActivity(InformationIntent);
-            }
-        });
     }
+
+
 }

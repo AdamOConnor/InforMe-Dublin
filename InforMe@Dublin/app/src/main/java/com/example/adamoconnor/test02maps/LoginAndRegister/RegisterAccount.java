@@ -2,8 +2,10 @@ package com.example.adamoconnor.test02maps.LoginAndRegister;
 
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.text.TextUtils;
@@ -13,7 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
 import com.example.adamoconnor.test02maps.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -28,32 +29,33 @@ import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 import com.theartofdev.edmodo.cropper.CropImage;
 import com.theartofdev.edmodo.cropper.CropImageView;
-
 import java.util.Random;
-
-/**
- * Created by Adam O'Connor on 13/04/2017.
- */
 
 public class RegisterAccount extends Progress {
 
     private static final String TAG = "RegisterAccount";
 
+    // declare the textviews etc...
     private EditText mNameField;
     private EditText mEmailField;
     private EditText mPasswordField;
     private ImageButton mSetupImageButton;
 
+    // declare button to register.
     private Button mRegisterButton;
 
+    // declare progress bar.
     private ProgressDialog mProgress;
 
+    // declaring firebase authentication, database and storage reference.
     private FirebaseAuth mAuth;
     private DatabaseReference mDatabase;
     private StorageReference mStorageImage;
 
+    //declare an image URI.
     private Uri mImageUri = null;
 
+    // declaring GALLERY_REQUEST result.
     private static final int GALLERY_REQUEST = 1;
 
     @Override
@@ -61,16 +63,21 @@ public class RegisterAccount extends Progress {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_account);
 
+        // getting users authentication of application.
         mAuth = FirebaseAuth.getInstance();
+
+        // database and storage reference's.
         mDatabase = FirebaseDatabase.getInstance().getReference().child("users");
         mStorageImage = FirebaseStorage.getInstance().getReference().child("Profile_images");
 
+        // textfield and button declarations to the layout file.
         mNameField = (EditText) findViewById(R.id.nameField);
         mEmailField = (EditText) findViewById(R.id.emailField);
         mPasswordField = (EditText) findViewById(R.id.passwordField);
         mRegisterButton = (Button) findViewById(R.id.registerButton);
         mSetupImageButton = (ImageButton) findViewById(R.id.profileSetup);
 
+        // used for selecting an image for the user's profile.
         mSetupImageButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -88,6 +95,7 @@ public class RegisterAccount extends Progress {
             }
         });
 
+        // used for registering user.
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,19 +105,29 @@ public class RegisterAccount extends Progress {
 
     }
 
+    /**
+     * start to register the user with an email address, password, name
+     * and profile image.
+     */
     private void startRegister() {
 
+        // used for getting the information from the user.
         final String name = mNameField.getText().toString().trim();
-        mProgress = new ProgressDialog(RegisterAccount.this);
-        mProgress.setMessage("Registering user "+name+" ...");
         final String email = mEmailField.getText().toString().trim();
         final String password = mPasswordField.getText().toString().trim();
 
+        //set progress bar.
+        mProgress = new ProgressDialog(RegisterAccount.this);
+        mProgress.setMessage("Registering user "+name+" ...");
+
+        // validate user has text in fields.
         validateForm();
 
+        //check if image is not selected.
         if(mImageUri != null) {
 
-                // [START create_user_with_email]
+
+                // START create_user_with_email and password.
                 mAuth.createUserWithEmailAndPassword(email, password)
                         .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -117,11 +135,19 @@ public class RegisterAccount extends Progress {
                                 Log.d(TAG, "createUserWithEmail:onComplete:" + task.isSuccessful());
                                 if (task.isSuccessful()) {
 
+                                    // getting current users authenticated id.
                                     final String user_id = mAuth.getCurrentUser().getUid();
+
+                                    // updated username in shared preferences.
+                                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
+                                    SharedPreferences.Editor settingsEditor =  preferences.edit();
+                                    settingsEditor.putString("name_preference", name);
+                                    settingsEditor.apply();
 
                                     StorageReference filepath = mStorageImage.child(random());
                                     filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                                         @Override
+                                        // adding users information to the database.
                                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
 
                                             @SuppressWarnings("VisibleForTests")
@@ -134,6 +160,7 @@ public class RegisterAccount extends Progress {
                                         }
                                     });
 
+                                    // allow a delay for the database being updated
                                     new Thread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -159,16 +186,22 @@ public class RegisterAccount extends Progress {
                                             Toast.LENGTH_SHORT).show();
                                 }
 
-                                // [END_EXCLUDE]
                             }
                         });
         } else {
             Toast.makeText(RegisterAccount.this, "Please select an Image for your profile.",
                     Toast.LENGTH_SHORT).show();
         }
-            // [END create_user_with_email]
 
-    }  public static String random() {
+    }
+
+    /**
+     * used for setting the images name which is added to the storage,
+     * database as some images may have the same name.
+     * @return
+     * return random string.
+     */
+    public static String random() {
         Random generator = new Random();
         StringBuilder randomStringBuilder = new StringBuilder();
         int randomLength = generator.nextInt(10);
@@ -180,6 +213,11 @@ public class RegisterAccount extends Progress {
         return randomStringBuilder.toString();
     }
 
+    /**
+     * used to validate the registration form.
+     * @return
+     * return the error if user has not entered text.
+     */
     private boolean validateForm() {
         boolean valid = true;
 
@@ -199,7 +237,6 @@ public class RegisterAccount extends Progress {
             mNameField.setError(null);
         }
 
-
         String password = mPasswordField.getText().toString();
         if (TextUtils.isEmpty(password)) {
             mPasswordField.setError("Required.");
@@ -211,21 +248,32 @@ public class RegisterAccount extends Progress {
         return valid;
     }
 
+    /**
+     *
+     * @param requestCode
+     * code on which was requested as the gallery intent.
+     * @param resultCode
+     * if the request was successful continue.
+     * @param data
+     * the data on which was selected, profile image.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
         if(requestCode == GALLERY_REQUEST && resultCode == RESULT_OK) {
 
+            // get the image data send to the declared URI
             mImageUri = data.getData();
 
+            // crop the image to specific size.
             CropImage.activity(mImageUri)
                     .setGuidelines(CropImageView.Guidelines.ON)
                     .setAspectRatio(1,1)
                     .start(this);
-
         }
 
+        // on cropped image display to the user in the image button.
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             CropImage.ActivityResult result = CropImage.getActivityResult(data);
             if (resultCode == RESULT_OK) {

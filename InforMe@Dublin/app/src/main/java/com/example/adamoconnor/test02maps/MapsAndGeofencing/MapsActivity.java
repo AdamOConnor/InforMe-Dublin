@@ -9,6 +9,7 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Color;
@@ -28,6 +29,7 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
@@ -128,6 +130,8 @@ public class MapsActivity extends Progress
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
@@ -141,6 +145,29 @@ public class MapsActivity extends Progress
             mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
             mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         }
+
+        new Thread(new Runnable() {
+            @Override
+
+            public void run() {
+                Looper.prepare();
+                try {
+                    Thread.sleep(5000);
+                    h = new Handler();
+                    final int delay = 2000; //milliseconds
+
+                    h.postDelayed(myrunnable = new Runnable(){
+                        public void run(){
+                            startLocationUpdates();
+                            h.postDelayed(this, delay);
+                        }
+                    }, delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }).start();
 
         FloatingActionButton addInfo = (FloatingActionButton)  this.findViewById(R.id.floatingAddInfoButton);
         addInfo.setOnClickListener(new View.OnClickListener() {
@@ -171,6 +198,7 @@ public class MapsActivity extends Progress
                     // The toggle is disabled
                     toggle.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.TransparetNonFocus)));
                     try {
+                        h.removeCallbacks(myrunnable);
                         h.removeCallbacks(myrunnable);
                     }catch (NullPointerException ex) {
 
@@ -208,14 +236,13 @@ public class MapsActivity extends Progress
         if (!gps_enabled) {
             // notify user
             AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setMessage(this.getResources().getString(R.string.gps_network_not_enabled));
+            dialog.setMessage("GPS not enabled ...");
             dialog.setPositiveButton(this.getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     // TODO Auto-generated method stub
                     Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
                     startActivity(myIntent);
-                    //get gps
                 }
             });
             dialog.setNegativeButton(this.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
@@ -223,7 +250,7 @@ public class MapsActivity extends Progress
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     // TODO Auto-generated method stub
-
+                    finish();
                 }
             });
             dialog.show();
@@ -247,7 +274,7 @@ public class MapsActivity extends Progress
                 @Override
                 public void onClick(DialogInterface paramDialogInterface, int paramInt) {
                     // TODO Auto-generated method stub
-
+                    finish();
                 }
             });
             dialog.show();
@@ -290,6 +317,7 @@ public class MapsActivity extends Progress
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
+
     }
 
     @Override
