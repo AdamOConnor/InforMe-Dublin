@@ -317,6 +317,8 @@ public class RegisterAccount extends Progress {
 
     }
 
+    //storage reference.
+    final int MY_STORAGE = 1;
     /**
      * getting android permission to access storage for the device.
      * @return
@@ -324,26 +326,62 @@ public class RegisterAccount extends Progress {
      */
     public  boolean isStoragePermissionGranted() {
         if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(RegisterAccount.this, "Permission is granted", Toast.LENGTH_SHORT).show();
-                Log.v(TAG,"Permission is granted");
-                return true;
-            } else {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
 
-                Log.v(TAG,"Permission is revoked");
-                Toast.makeText(RegisterAccount.this, "Permission is revoked", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                Intent backIntent = new Intent(RegisterAccount.this, EmailPasswordAuthentication.class);
-                backIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                backIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(backIntent);
-                return false;
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                    // Show an expanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                    //Prompt the user once explanation has been shown
+                    //(just doing it here for now, note that with this code, no explanation is shown)
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            MY_STORAGE);
+
+
+                } else {
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            MY_STORAGE);
+                }
             }
         }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted");
+        else {
+            //permission is automatically granted on sdk<23 upon installation
             return true;
         }
+        return false;
     }
+
+    /**
+     * request the permission that is needed.
+     * @param requestCode
+     * request the code needed
+     * @param permissions
+     * pass the permission that is needed
+     * @param grantResults
+     * retrieve the result the needs to be achieved
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_STORAGE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                } else {
+                    isStoragePermissionGranted();
+                }
+                return;
+            }
+        }
+    }
+
 }

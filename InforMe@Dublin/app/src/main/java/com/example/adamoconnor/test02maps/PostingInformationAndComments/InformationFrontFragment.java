@@ -34,6 +34,8 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
     //declare text to speech.
     private TextToSpeech repeatText;
 
+    private Boolean soundButton = true;
+
     //declare textView's
     private TextView information;
     private TextView title;
@@ -70,7 +72,7 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
         // keep the database synced.
         database.keepSynced(true);
 
-        View view = inflater.inflate(R.layout.activity_information, container, false);
+        final View view = inflater.inflate(R.layout.activity_information, container, false);
 
         //declare reference to the layout buttons.
         listenButton = (ImageButton)view.findViewById(R.id.informationListen);
@@ -92,7 +94,14 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
         //listen button start textToSpeech
         listenButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-                TextToSpeech();
+                if(soundButton) {
+                    listenButton.setImageResource(R.drawable.soundicon);
+
+                }
+                else {
+                    listenButton.setImageResource(R.drawable.muteicon);
+                }
+                TextToSpeech(v);
             }
         });
 
@@ -133,19 +142,18 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
      * text to speech method used when using
      * specific sound button.
      */
-    public void TextToSpeech(){
+    public void TextToSpeech(View view){
 
         if(repeatText.isSpeaking()) {
 
-            listenButton.setImageResource(R.drawable.soundicon);
             repeatText.stop();
+            soundButton = true;
         }
         // If it's not playing
         else {
             // Resume the music player
-            listenButton.setImageResource(R.drawable.muteicon);
             ConvertTextToSpeech();
-
+            soundButton = false;
         }
 
     }
@@ -155,17 +163,13 @@ public class InformationFrontFragment extends Fragment implements BaseSliderView
      * that was retrieved from firebase.
      */
     private void ConvertTextToSpeech() {
-        // TODO Auto-generated method stub
         String text = information.getText().toString();
         if(!TextUtils.isEmpty(text))
         {
             repeatText.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-            listenButton.setImageResource(R.drawable.soundicon);
         }else {
             repeatText.speak(text, TextToSpeech.QUEUE_FLUSH, null);
-            listenButton.setImageResource(R.drawable.muteicon);
         }
-
     }
 
     /**

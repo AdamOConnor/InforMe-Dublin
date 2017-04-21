@@ -1,6 +1,5 @@
 package com.example.adamoconnor.test02maps.LoginAndRegister;
 
-import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +9,6 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -150,9 +148,7 @@ public class EmailPasswordAuthentication extends Progress implements
                 })
                 .addApi(Auth.GOOGLE_SIGN_IN_API, googleLog)
                 .build();
-
     }
-
 
     /**
      * Used for the signing in of a google authentication
@@ -277,38 +273,6 @@ public class EmailPasswordAuthentication extends Progress implements
     }
 
     /**
-     * check weather location is enabled
-     * show dialog to user to gain permission,
-     * @return
-     * return true or false.
-     */
-    public  boolean isLocationPermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.ACCESS_FINE_LOCATION)
-                    == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(EmailPasswordAuthentication.this, "Permission is granted", Toast.LENGTH_SHORT).show();
-                Log.v(TAG,"Permission is granted");
-                return true;
-            } else {
-
-                Log.v(TAG,"Permission is revoked");
-                Toast.makeText(EmailPasswordAuthentication.this, "Permission is revoked", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, 1);
-                Intent backIntent = new Intent(EmailPasswordAuthentication.this, EmailPasswordAuthentication.class);
-                backIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                backIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(backIntent);
-                return false;
-            }
-        }
-        else { //permission is automatically granted on sdk<23 upon installation
-            Log.v(TAG,"Permission is granted");
-            Toast.makeText(EmailPasswordAuthentication.this, "Permission is granted", Toast.LENGTH_SHORT).show();
-            return true;
-        }
-    }
-
-    /**
      * used to get the location of the device in order
      * to populate geofences for the specific area...
      * @return
@@ -317,7 +281,6 @@ public class EmailPasswordAuthentication extends Progress implements
      */
     public Location getLocation() {
         //check permission before using.
-        isLocationPermissionGranted();
         checkLocationPermission();
         LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         if (locationManager != null) {

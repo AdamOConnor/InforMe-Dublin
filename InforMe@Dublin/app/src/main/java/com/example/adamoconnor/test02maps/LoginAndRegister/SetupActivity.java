@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.preference.PreferenceManager;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -65,9 +66,6 @@ public class SetupActivity extends AppCompatActivity {
         //setting screen orientation to stop fragments view showing on eachother.
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
-        // grant permission.
-        isStoragePermissionGranted();
-
         //initiate progress bar.
         mProgress = new ProgressDialog(this);
 
@@ -104,6 +102,75 @@ public class SetupActivity extends AppCompatActivity {
                 startSetupAccount();
             }
         });
+
+        isStoragePermissionGranted();
+    }
+
+    //storage reference.
+    final int MY_STORAGE = 1;
+    /**
+     * getting android permission to access storage for the device.
+     * @return
+     * return true or false
+     */
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (ContextCompat.checkSelfPermission(this,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    != PackageManager.PERMISSION_GRANTED) {
+
+                // Should we show an explanation?
+                if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+
+                    // Show an expanation to the user *asynchronously* -- don't block
+                    // this thread waiting for the user's response! After the user
+                    // sees the explanation, try again to request the permission.
+
+                    //Prompt the user once explanation has been shown
+                    //(just doing it here for now, note that with this code, no explanation is shown)
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            MY_STORAGE);
+
+
+                } else {
+                    // No explanation needed, we can request the permission.
+                    ActivityCompat.requestPermissions(this,
+                            new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                            MY_STORAGE);
+                }
+            }
+        }
+        else {
+            //permission is automatically granted on sdk<23 upon installation
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * request the permission that is needed.
+     * @param requestCode
+     * request the code needed
+     * @param permissions
+     * pass the permission that is needed
+     * @param grantResults
+     * retrieve the result the needs to be achieved
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_STORAGE: {
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    // permission was granted, yay! Do the
+                } else {
+                    isStoragePermissionGranted();
+                }
+                return;
+            }
+        }
     }
 
     /**
@@ -206,30 +273,4 @@ public class SetupActivity extends AppCompatActivity {
 
     }
 
-    /**
-     * getting android permission to access storage for the device.
-     * @return
-     * return true or false
-     */
-    public  boolean isStoragePermissionGranted() {
-        if (Build.VERSION.SDK_INT >= 23) {
-            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
-                    == PackageManager.PERMISSION_GRANTED) {
-                return true;
-            } else {
-                //permission revoked
-                Toast.makeText(SetupActivity.this, "Permission is revoked", Toast.LENGTH_SHORT).show();
-                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
-                Intent backIntent = new Intent(SetupActivity.this, EmailPasswordAuthentication.class);
-                backIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                backIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                startActivity(backIntent);
-                return false;
-            }
-        }
-        else {
-            //permission is automatically granted on sdk<23 upon installation
-            return true;
-        }
-    }
 }

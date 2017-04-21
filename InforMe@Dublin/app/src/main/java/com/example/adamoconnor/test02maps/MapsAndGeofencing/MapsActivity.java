@@ -587,11 +587,7 @@ public class MapsActivity extends Progress
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
-                    Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
-                    Intent backIntent = new Intent(MapsActivity.this, EmailPasswordAuthentication.class);
-                    backIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                    backIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(backIntent);
+                    checkLocationPermission();
                 }
                 return;
             }
