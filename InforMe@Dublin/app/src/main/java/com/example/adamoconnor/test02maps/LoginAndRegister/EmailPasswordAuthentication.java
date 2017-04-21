@@ -3,6 +3,7 @@ package com.example.adamoconnor.test02maps.LoginAndRegister;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
 import android.location.Address;
 import android.location.Geocoder;
@@ -83,6 +84,9 @@ public class EmailPasswordAuthentication extends Progress implements
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_emailpassword);
+
+        //setting screen orientation to stop fragments view showing on eachother.
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // declare progress dialog
         mProgressDialog = new ProgressDialog(this);
@@ -335,7 +339,7 @@ public class EmailPasswordAuthentication extends Progress implements
                     String myLandmarks = alert.getValue().toString();
                     //splitted name | long | lat
                     String[] splited = myLandmarks.split("\\|");
-                    // send to the package com.example.adamoconnor.test02maps.LoginAndRegister; Constants Landmarks array.
+                    // send to the package com.example.adamoconnor.test02maps.LoginAndRegister; Constants Landmarks Hashmap.
                     LANDMARKS.put(splited[0], new LatLng(Double.parseDouble(splited[1]), Double.parseDouble(splited[2])));
                 }
             }

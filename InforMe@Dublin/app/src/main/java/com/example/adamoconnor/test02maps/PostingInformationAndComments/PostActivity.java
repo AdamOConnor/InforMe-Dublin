@@ -3,6 +3,7 @@ package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
@@ -14,8 +15,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.Toast;
-
-import com.example.adamoconnor.test02maps.LoginAndRegister.RegisterAccount;
 import com.example.adamoconnor.test02maps.R;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -32,56 +31,84 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-
 import java.util.Random;
-
 import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.getMonumentName;
 
 public class PostActivity extends AppCompatActivity {
 
+    //declare context.
     private Context mContext;
+
+    //declare image button
     private ImageButton selectImage;
+
+    //declare editTexts.
     private EditText postTitle;
     private EditText postDescription;
-    private Button submitPost;
-    private Uri imageUri = null;
-    private static final int GALLERY_REQUEST = 1;
-    private StorageReference mStorage;
-    private ProgressDialog mProgress;
-    private DatabaseReference mDatabase;
-    private FirebaseAuth mAuth;
-    private FirebaseUser mCurrentUser;
-    private DatabaseReference mDatabaseUsers;
 
+    //declare button.
+    private Button submitPost;
+
+    //declare Uri
+    private Uri imageUri = null;
+
+    //declare gallery request.
+    private static final int GALLERY_REQUEST = 1;
+
+    //declare progress dialog.
+    private ProgressDialog mProgress;
+
+    //declare database references
+    private DatabaseReference mDatabase;
+    private DatabaseReference mDatabaseUsers;
     private DatabaseReference mDatabaseUsersProfilePicture;
+
+    //declare firebase authentication.
+    private FirebaseAuth mAuth;
+
+    //declare firebase user.
+    private FirebaseUser mCurrentUser;
+
+    //declare firebase storage.
+    private StorageReference mStorage;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_post);
 
+        //setting screen orientation to stop fragments view showing on eachother.
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        // declare context reference
         mContext = this;
 
+        //declare authentication instance
         mAuth = FirebaseAuth.getInstance();
 
+        // get the users authentcation
         mCurrentUser = mAuth.getCurrentUser();
 
+        // get the storage and database instances with each reference
         mStorage = FirebaseStorage.getInstance().getReference();
         mDatabase = FirebaseDatabase.getInstance().getReference().child("comments").child(getMonumentName());
-
         mDatabaseUsers = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrentUser.getUid());
-
         mDatabaseUsersProfilePicture = FirebaseDatabase.getInstance().getReference().child("users").child(mCurrentUser.getUid()).child("image");
 
+        //reference to selecting image.
         selectImage = (ImageButton) findViewById(R.id.imageSelect);
 
+        //reference to edit text fields
         postTitle = (EditText) findViewById(R.id.title);
         postDescription = (EditText) findViewById(R.id.description);
 
+        //reference to the button on the layout
         submitPost = (Button) findViewById(R.id.submitButton);
 
+        //setting reference to progress dialog.
         mProgress = new ProgressDialog(this);
 
+        //selecting of the image listener.
         selectImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -90,26 +117,31 @@ public class PostActivity extends AppCompatActivity {
                     public void run() {
 
                         Intent galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
+                        //only look at images.
                         galleryIntent.setType("image/*");
                         startActivityForResult(galleryIntent,GALLERY_REQUEST);
-
                     }
                 }.start();
 
             }
         });
 
+        //submit the post.
         submitPost.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
                 new LongOperation().execute();
-
             }
         });
 
     }
 
+    /**
+     * random string generator for the uploaded image
+     * @return
+     * random string to return
+     */
     public static String random() {
         Random generator = new Random();
         StringBuilder randomStringBuilder = new StringBuilder();
@@ -122,6 +154,15 @@ public class PostActivity extends AppCompatActivity {
         return randomStringBuilder.toString();
     }
 
+    /**
+     * display the image on the ImageButton
+     * @param requestCode
+     * get request code
+     * @param resultCode
+     * get result code
+     * @param data
+     * retrieve image.
+     */
     @Override
     protected void onActivityResult(int requestCode, int resultCode, final Intent data) {
         super.onActivityResult(requestCode,resultCode,data);
@@ -137,24 +178,37 @@ public class PostActivity extends AppCompatActivity {
                             .into(selectImage);
                 }
             });
-
         }
     }
 
+    /**
+     * onResume method.
+     */
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
 
     }
 
+    /**
+     * onPause method.
+     */
     @Override
     public void onPause() {
         super.onPause();  // Always call the superclass method first
 
     }
 
+    /**
+     * long operation to post the information about the specific
+     * monument.
+     */
     private class LongOperation extends AsyncTask<Void,String, String> {
 
+        /**
+         * pre execution used for the progress
+         * dialog.
+         */
         @Override
         protected void onPreExecute()
         {
@@ -166,6 +220,13 @@ public class PostActivity extends AppCompatActivity {
             super.onPreExecute();
         }
 
+        /**
+         * run a method in the background.
+         * @param params
+         * pass parameters
+         * @return
+         * return execution.
+         */
         @Override
         protected String doInBackground(Void... params) {
 
@@ -231,7 +292,6 @@ public class PostActivity extends AppCompatActivity {
                                             Toast.makeText(PostActivity.this, "OOps looks like something went wrong, please check internet connection ...",
                                                     Toast.LENGTH_LONG).show();
                                         }
-
 
                                     }
                                 });

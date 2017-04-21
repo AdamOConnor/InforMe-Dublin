@@ -1,19 +1,3 @@
-/*
- * Copyright 2012 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.example.adamoconnor.test02maps.PostingInformationAndComments;
 
 import android.app.FragmentManager;
@@ -26,10 +10,8 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-
 import com.example.adamoconnor.test02maps.MapsAndGeofencing.MapsActivity;
 import com.example.adamoconnor.test02maps.R;
-
 import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.setMonumentName;
 
 /**
@@ -58,8 +40,10 @@ public class InformationFlipActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_flip);
 
+        //setting screen orientation to stop fragments view showing on eachother.
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        // get the specific monument entered.
         Bundle extras = null;
         if (savedInstanceState == null) {
             extras = getIntent().getExtras();
@@ -82,6 +66,7 @@ public class InformationFlipActivity extends AppCompatActivity
             }
         }
 
+        // send to new thread
         MyThread myThread = new MyThread();
         myThread.start();
 
@@ -90,11 +75,15 @@ public class InformationFlipActivity extends AppCompatActivity
         getFragmentManager().addOnBackStackChangedListener(this);
     }
 
+    /**
+     * start new thread to use fragment manager
+     * to speed things up and allow less computation on
+     * the UI thread.
+     */
     public class MyThread extends Thread{
 
         @Override
         public void run() {
-            // TODO Auto-generated method stub
 
             // If there is no saved instance state, add a fragment representing the
             // front of the card to this activity. If there is saved instance state,
@@ -108,12 +97,25 @@ public class InformationFlipActivity extends AppCompatActivity
 
     }
 
+    /**
+     * used to set the configuration of the orientation of the
+     * activity
+     * @param newConfig
+     * configuration which has been set.
+     */
     @Override
     public void onConfigurationChanged(Configuration newConfig) {
         super.onConfigurationChanged(newConfig);
         //here you can handle orientation change
     }
 
+    /**
+     * create the options menu when activity is created.
+     * @param menu
+     * imenu reference
+     * @return
+     * return the action.
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -131,6 +133,14 @@ public class InformationFlipActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * find which item has been selected like an
+     * onClickListener.
+     * @param item
+     * items which can be selected.
+     * @return
+     * return the boolean.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -148,6 +158,9 @@ public class InformationFlipActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * used to flip the fragments when user wants to change.
+     */
     private void flipCard() {
         if (mShowingBack) {
             getFragmentManager().popBackStack();
@@ -155,12 +168,10 @@ public class InformationFlipActivity extends AppCompatActivity
         }
 
         // Flip to the back.
-
         mShowingBack = true;
 
         // Create and commit a new fragment transaction that adds the fragment for the back of
         // the card, uses custom animations, and is part of the fragment manager's back stack.
-
         getFragmentManager()
                 .beginTransaction()
 
@@ -195,6 +206,9 @@ public class InformationFlipActivity extends AppCompatActivity
         });
     }
 
+    /**
+     * check when fragments on the back of the stack.
+     */
     @Override
     public void onBackStackChanged() {
         mShowingBack = (getFragmentManager().getBackStackEntryCount() > 0);
@@ -203,12 +217,18 @@ public class InformationFlipActivity extends AppCompatActivity
         invalidateOptionsMenu();
     }
 
+    /**
+     * onResume method for activity.
+     */
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
 
     }
 
+    /**
+     * onPause method used for activity.
+     */
     @Override
     public void onPause() {
         super.onPause();  // Always call the superclass method first

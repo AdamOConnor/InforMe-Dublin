@@ -18,9 +18,7 @@ import android.preference.PreferenceManager;
 import android.preference.RingtonePreference;
 import android.text.TextUtils;
 import android.view.MenuItem;
-
 import com.example.adamoconnor.test02maps.R;
-
 import java.util.List;
 
 /**
@@ -35,6 +33,7 @@ import java.util.List;
  * API Guide</a> for more information on developing a Settings UI.
  */
 public class SettingsActivity extends AppCompatPreferenceActivity {
+
     /**
      * A preference value change listener that updates the preference's summary
      * to reflect its new value.
@@ -135,6 +134,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
         }
     }
 
+    /**
+     * set the options menu
+     * @param item
+     * passing in the items in the menu
+     * @return
+     * return the item selected.
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
@@ -194,6 +200,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
 
         }
 
+        /**
+         * set the options menu
+         * @param item
+         * passing in the items in the menu
+         * @return
+         * return the item selected.
+         */
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
 
@@ -226,6 +239,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             bindPreferenceSummaryToValue(findPreference("notifications_new_message_ringtone"));
         }
 
+        /**
+         * set the options menu
+         * @param item
+         * passing in the items in the menu
+         * @return
+         * return the item selected.
+         */
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();
@@ -256,6 +276,13 @@ public class SettingsActivity extends AppCompatPreferenceActivity {
             // guidelines.
         }
 
+        /**
+         * set the options menu
+         * @param item
+         * passing in the items in the menu
+         * @return
+         * return the item selected.
+         */
         @Override
         public boolean onOptionsItemSelected(MenuItem item) {
             int id = item.getItemId();

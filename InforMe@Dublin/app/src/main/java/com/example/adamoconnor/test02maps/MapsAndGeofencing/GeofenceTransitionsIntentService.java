@@ -13,23 +13,20 @@ import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
-
 import com.example.adamoconnor.test02maps.PostingInformationAndComments.InformationFlipActivity;
 import com.example.adamoconnor.test02maps.R;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
-
 import android.net.Uri;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Created by Adam O'Connor on 08/02/2017.
- */
-
 public class GeofenceTransitionsIntentService extends IntentService {
+
     protected static final String TAG = "GeofenceTransitionsIS";
+
+    // getting description of area.
     public static String description;
 
     public GeofenceTransitionsIntentService() {
@@ -38,46 +35,68 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
+
+        // geofence event triggered when entering geofence.
         GeofencingEvent event = GeofencingEvent.fromIntent(intent);
         if (event.hasError()) {
             Log.e(TAG, "GeofencingEvent Error: " + event.getErrorCode());
         }
+
+        // get the description of the geofence.
         description = getGeofenceTransitionDetails(event);
-        SystemClock.sleep(4000);
-        //sendInformation(description);
+
+        // allow a delay for the notification.
+        SystemClock.sleep(3000);
+
+        // call showNotifiation method to send notification when entering geofence.
         showNotification(description);
     }
 
     private static String getGeofenceTransitionDetails(GeofencingEvent event) {
 
-        String transitionString =
-                GeofenceStatusCodes.getStatusCodeString(event.getGeofenceTransition());
+        // getting the code of the geofence.
+        String transitionString = GeofenceStatusCodes.getStatusCodeString(event.getGeofenceTransition());
+
+        // getting trigger id.
         List triggeringIDs = new ArrayList();
         for (Geofence geofence : event.getTriggeringGeofences()) {
             triggeringIDs.add(geofence.getRequestId());
         }
+
+        // return the strings of the geofence.
         return String.format("%s| %s", transitionString, TextUtils.join(", ", triggeringIDs));
     }
 
     public void showNotification(String text) {
+
+        // getting the preferences which the user has set.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String test = null;
+
+        //declare string
+        String sound = null;
+
+        //declare URI for sound.
         Uri notificationSound;
+
+        //declare int for the vibration.
         int vibrationSet;
-        notificationSound = Uri.parse(preferences.getString("notifications_new_message_ringtone",test));
+
+        // set the sound of the preferences.
+        notificationSound = Uri.parse(preferences.getString("notifications_new_message_ringtone",sound));
+
+        //set the vibration.
         if(preferences.getBoolean("notifications_new_message_vibrate",true) == true) {
             vibrationSet = Notification.DEFAULT_VIBRATE;
         }else {
             vibrationSet = 0;
         }
 
-
         // 1. Create a NotificationManager
         NotificationManager notificationManager =
                 (NotificationManager) this.getSystemService(Context.NOTIFICATION_SERVICE);
         String[] splited = text.split("\\|");
-        // 2. Create a PendingIntent for AllGeofencesActivity
-        Intent intent = new Intent(this, InformationFlipActivity.class);//Information.class
+        // 2. Create a PendingIntent for MapsActivity
+        Intent intent = new Intent(this, InformationFlipActivity.class);
         intent.putExtra("1", splited[1]);
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP | Intent.FLAG_ACTIVITY_CLEAR_TOP);//FLAG_UPDATE_CURRENT
         PendingIntent pendingNotificationIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent. FLAG_UPDATE_CURRENT);
@@ -99,31 +118,33 @@ public class GeofenceTransitionsIntentService extends IntentService {
 
         notificationManager.notify(0, notification);
 
+        //create a thread.
         MyThread myThread = new MyThread();
         myThread.start();
     }
 
     final static String MY_ACTION = "MY_ACTION";
-    final static String INFORMATION_ACTION = "INFORMATION_ACTION";
 
-    public class MyThread extends Thread{
+    /**
+     * create thread to send the data to the MapsActivity to populate dialog etc.
+     */
+    private class MyThread extends Thread{
 
         @Override
         public void run() {
-            // TODO Auto-generated method stub
-           // for(int i=0; i<10; i++){
-                try {
-                    Thread.sleep(3000);
-                    String[] splited = description.split("\\|");
-                    Intent intent = new Intent();
-                    intent.setAction(MY_ACTION);
-                    intent.putExtra("DATAPASSED", splited[1]);
 
-                    sendBroadcast(intent);
+            try {
+                Thread.sleep(3000);
+                String[] splited = description.split("\\|");
+                Intent intent = new Intent();
+                intent.setAction(MY_ACTION);
+                intent.putExtra("DATAPASSED", splited[1]);
 
-                }catch(InterruptedException e){
+                sendBroadcast(intent);
 
-                }
+            }catch(InterruptedException e){
+
+            }
             stopSelf();
         }
 

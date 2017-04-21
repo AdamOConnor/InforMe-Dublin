@@ -10,24 +10,42 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-
 import com.example.adamoconnor.test02maps.R;
 
 public class CheckConnectivity {
 
+    // declare booleans.
     private static boolean internetOn;
     private static boolean locationOn;
 
+    /**
+     * check if internet is on.
+     * @return
+     * return the boolean if internet is connected.
+     */
     public static boolean isInternetOn() {
         return internetOn;
     }
 
+    /**
+     * check if location is on.
+     * @return
+     * return the boolean if location is connected.
+     */
     public static boolean isLocationOn() {
         return locationOn;
     }
 
+    /**
+     * used to check if internet is connected if not
+     * user is sent to the settings menu to turn internet
+     * on.
+     * @param context
+     * get the activity to display
+     */
     public static void startInternetEnabled(final Context context) {
 
+        // check the internets connectivity
         ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
 
         NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
@@ -44,7 +62,7 @@ public class CheckConnectivity {
 
                     Intent myIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
                     context.startActivity(myIntent);
-                    //get gps
+                    //go to internet settings.
                 }
             });
             dialog.setNegativeButton(context.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
@@ -70,7 +88,11 @@ public class CheckConnectivity {
 
     }
 
-
+    /**
+     * used to check if location is connected
+     * @param context
+     * get the activity to display
+     */
     private static boolean isLocationEnabled(Context context) {
         int locationMode = 0;
         String locationProviders;
@@ -94,6 +116,13 @@ public class CheckConnectivity {
 
     }
 
+    /**
+     * used to check if location is connected if not
+     * user is sent to the settings menu to turn internet
+     * on.
+     * @param context
+     * get the activity to display
+     */
     public static void startLocationEnabled(final Context context) {
 
         if(!isLocationEnabled(context)) {

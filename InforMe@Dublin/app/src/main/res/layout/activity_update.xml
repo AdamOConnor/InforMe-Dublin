@@ -10,12 +10,11 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="465dp"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
         android:orientation="vertical"
         android:paddingTop="2dp"
         android:weightSum="1"
-        tools:ignore="UselessParent">
+        tools:ignore="UselessParent"
+        android:layout_alignParentStart="true">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -75,10 +74,12 @@
             android:padding="15dp"
             android:text="@string/post_title"
             android:textSize="16sp"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            android:inputType=""
+            tools:ignore="LabelFor" />
 
         <EditText
-            android:id="@+id/description"
+            android:id="@+id/commentDescription"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@+id/title"
@@ -90,9 +91,10 @@
             android:ems="10"
             android:hint="Post Description"
             android:inputType="textMultiLine"
+            android:minLines="6"
             android:padding="15dp"
             android:textSize="15sp"
-            tools:ignore="HardcodedText" />
+            tools:ignore="HardcodedText,InefficientWeight,ObsoleteLayoutParam" />
 
     </LinearLayout>
 
@@ -101,18 +103,8 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentStart="true">
-
-        <Button
-            android:id="@+id/commentRemove"
-            android:layout_width="193dp"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_alignParentTop="true"
-            android:layout_weight="1"
-            android:text="@string/remove_post"
-            android:theme="@style/ThemeOverlay.MyDarkButton"
-            android:visibility="gone" />
+        android:layout_alignParentStart="true"
+        android:id="@+id/linearLayout">
 
         <Button
             android:id="@+id/updatePost"
@@ -121,9 +113,10 @@
             android:layout_alignEnd="@+id/commentRemove"
             android:layout_centerVertical="true"
             android:layout_weight="1"
-            android:text="update Post"
+            android:text="@string/update_post"
             android:theme="@style/ThemeOverlay.MyDarkButton"
-            android:visibility="gone" />
+            android:visibility="visible"
+            tools:ignore="InefficientWeight,ObsoleteLayoutParam" />
     </LinearLayout>
 
 </RelativeLayout>

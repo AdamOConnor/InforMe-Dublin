@@ -3,17 +3,17 @@ package com.example.adamoconnor.test02maps.MapsAndGeofencing;
 
 import com.google.android.gms.maps.model.LatLng;
 import java.util.HashMap;
-/**
- * Created by Adam O'Connor on 09/12/2016.
-**/
-
-
 import com.google.android.gms.location.Geofence;
 
 public class Constants {
 
+    // used to allow geofence to never expire.
     public static final long GEOFENCE_EXPIRATION_IN_MILLISECONDS = Geofence.NEVER_EXPIRE;
+
+    // show the radius of the geofence
     public static final float GEOFENCE_RADIUS_IN_METERS = 50;
+
+    // hashmap to hold the geo-fences.
     public static final HashMap<String, LatLng> LANDMARKS = new HashMap<>();
 
 }

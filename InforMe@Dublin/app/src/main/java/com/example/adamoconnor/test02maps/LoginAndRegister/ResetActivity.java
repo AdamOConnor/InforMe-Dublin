@@ -1,6 +1,8 @@
 package com.example.adamoconnor.test02maps.LoginAndRegister;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.support.annotation.NonNull;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
@@ -31,6 +33,9 @@ public class ResetActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_reset);
+
+        //setting screen orientation to stop fragments view showing on eachother.
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // action bar with back button.
         setupActionBar();
@@ -124,6 +129,27 @@ public class ResetActivity extends AppCompatActivity {
                                         .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                                             public void onClick(DialogInterface dialog, int which) {
 
+
+                                            }
+                                        })
+                                        .setNegativeButton(android.R.string.no, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+                                                // do nothing
+                                            }
+                                        })
+                                        .setIcon(R.drawable.informe4)
+                                        .show();
+                            }
+                            else {
+                                new AlertDialog.Builder(ResetActivity.this)
+                                        .setTitle("Email Account")
+                                        .setMessage("Sorry there is no account using this email address, would you like to create an account.")
+                                        .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                                Intent createAccount = new Intent(ResetActivity.this, EmailPasswordAuthentication.class);
+                                                createAccount.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(createAccount);
 
                                             }
                                         })

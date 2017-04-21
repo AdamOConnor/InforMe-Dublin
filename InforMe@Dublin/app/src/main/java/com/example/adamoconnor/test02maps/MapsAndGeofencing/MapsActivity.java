@@ -18,20 +18,17 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-
 import com.example.adamoconnor.test02maps.LoginAndRegister.Progress;
 import com.example.adamoconnor.test02maps.PostingInformationAndComments.AddInformation;
 import com.example.adamoconnor.test02maps.PostingInformationAndComments.InformationFlipActivity;
 import com.example.adamoconnor.test02maps.R;
+import com.example.adamoconnor.test02maps.Settings.CheckConnectivity;
 import com.google.android.gms.location.LocationListener;
 import android.location.LocationManager;
-import android.net.ConnectivityManager;
-import android.net.NetworkInfo;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
-import android.provider.Settings;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
 import android.os.Bundle;
@@ -43,7 +40,6 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
-
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
@@ -69,7 +65,6 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import java.util.ArrayList;
 import java.util.Map;
-
 import static com.example.adamoconnor.test02maps.R.id.map;
 
 public class MapsActivity extends Progress
@@ -81,33 +76,45 @@ public class MapsActivity extends Progress
         ResultCallback<Status>,
         SensorEventListener {
 
-    /**
-     * Used to persist application state about whether geofences were added.
-     */
+    Marker mGeofenceMarker;
 
+    //declare TAG.
     private static final String TAG = MapsActivity.class.getSimpleName();
-    Context mContext = MapsActivity.this;
-    GoogleMap mGoogleMap;
-    boolean test = true;
-    SupportMapFragment mapFrag;
-    Location mLastLocation;
-    Marker mCurrLocationMarker;
-    myReceiver myReceiver;
+    //declare GoogleMap for fragment
+    private GoogleMap mGoogleMap;
+    //used for populating of geofences
+    boolean populate = true;
+    //used for the map fragment
+    private SupportMapFragment mapFrag;
+    //used to get last location of user.
+    protected Location mLastLocation;
+    // used to recieve location updates
+    private myReceiver myReceiver;
+    //geofence arraylist
     protected ArrayList<Geofence> mGeofenceList;
+    //declare googleAPIClient
     protected GoogleApiClient mGoogleApiClient;
+    //declare sensor
     private SensorManager mSensorManager;
+    //declare type of sensor used
     private Sensor mProximity;
+    //sensitivity of sensor
     private static final int SENSOR_SENSITIVITY = 4;
-    private LocationManager locationManager;
-    private String bestAvailableProvider = LocationManager.GPS_PROVIDER;
-    private OnLocationChangedListener mListener;
-    private long minTime = 1000;
-    private float minDistance = 10;
+    //declare location manager
+    protected LocationManager locationManager;
+    //declare location changed listener
+    protected OnLocationChangedListener mListener;
+    // checking for gps connection.
     protected static final int REQUEST_CHECK_SETTINGS = 0x1;
+    // declare the location request.
     protected LocationRequest mLocationRequest;
+    //declare handler.
     protected Handler h;
-    protected boolean focus;
+    //declare runnable.
     protected Runnable myrunnable;
+    //declare check connectivity class.
+    private CheckConnectivity checkConnectivity;
+
     /**
      * Tracks the status of the location updates request. Value changes when the user presses the
      * Start Updates and Stop Updates buttons.
@@ -120,24 +127,26 @@ public class MapsActivity extends Progress
      */
     protected LocationSettingsRequest mLocationSettingsRequest;
 
-    /**
-     * Represents a geographical location.
-     */
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_maps);
 
+        // stop the activity resetting don't allow landscape mode.
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
+        // check permission if build is marshmallow or over.
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
-        isLocationOn();
+        //check location on.
+        checkConnectivity = new CheckConnectivity();
+        checkConnectivity.startInternetEnabled(this);
+        checkConnectivity.startLocationEnabled(this);
 
+        // getting preferences of the user to see if battery saver is on.
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
 
         if(preferences.getBoolean("battery_switch",true) == true) {
@@ -146,6 +155,7 @@ public class MapsActivity extends Progress
             mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         }
 
+        // create a new thread to start the focusing method for the view on the map.
         new Thread(new Runnable() {
             @Override
 
@@ -169,6 +179,7 @@ public class MapsActivity extends Progress
             }
         }).start();
 
+        // used to send email of new monument to InforMe@Dublin.
         FloatingActionButton addInfo = (FloatingActionButton)  this.findViewById(R.id.floatingAddInfoButton);
         addInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -178,6 +189,7 @@ public class MapsActivity extends Progress
             }
         });
 
+        // used to toggle focus on and off.
         final ToggleButton toggle = (ToggleButton) findViewById(R.id.toggleFocus);
         toggle.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -187,13 +199,13 @@ public class MapsActivity extends Progress
                     h = new Handler();
                     final int delay = 2000; //milliseconds
 
-
                     h.postDelayed(myrunnable = new Runnable(){
                         public void run(){
                             startLocationUpdates();
                             h.postDelayed(this, delay);
                         }
                     }, delay);
+
                 } else {
                     // The toggle is disabled
                     toggle.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.TransparetNonFocus)));
@@ -208,6 +220,7 @@ public class MapsActivity extends Progress
             }
         });
 
+        // geofence array list.
         mGeofenceList = new ArrayList<>();
 
         mapFrag = (SupportMapFragment) getSupportFragmentManager().findFragmentById(map);
@@ -216,74 +229,18 @@ public class MapsActivity extends Progress
 
     }
 
-    private void isLocationOn() {
-
-        LocationManager lm = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        boolean gps_enabled = false;
-
-        ConnectivityManager cm = (ConnectivityManager) this.getSystemService(Context.CONNECTIVITY_SERVICE);
-
-        NetworkInfo activeNetwork = cm.getActiveNetworkInfo();
-        boolean network_enabled = activeNetwork != null &&
-                activeNetwork.isConnectedOrConnecting();
-
-        try {
-            gps_enabled = lm.isProviderEnabled(LocationManager.GPS_PROVIDER);
-        } catch (Exception ex) {
-            Log.d(TAG, "Gps enabled exception");
-        }
-
-        if (!gps_enabled) {
-            // notify user
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setMessage("GPS not enabled ...");
-            dialog.setPositiveButton(this.getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    Intent myIntent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                    startActivity(myIntent);
-                }
-            });
-            dialog.setNegativeButton(this.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    finish();
-                }
-            });
-            dialog.show();
-        }
-
-        if (!network_enabled) {
-            // notify user
-            AlertDialog.Builder dialog = new AlertDialog.Builder(this);
-            dialog.setMessage(this.getResources().getString(R.string.network_not_enabled));
-            dialog.setPositiveButton(this.getResources().getString(R.string.open_location_settings), new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    Intent myIntent = new Intent(Settings.ACTION_WIFI_SETTINGS);
-                    startActivity(myIntent);
-                    //get gps
-                }
-            });
-            dialog.setNegativeButton(this.getString(R.string.Cancel), new DialogInterface.OnClickListener() {
-
-                @Override
-                public void onClick(DialogInterface paramDialogInterface, int paramInt) {
-                    // TODO Auto-generated method stub
-                    finish();
-                }
-            });
-            dialog.show();
-        }
-    }
-
+    /**
+     * creating the map on the creation of the activity.
+     * set each of the ui components of the map, such as
+     * compass etc.
+     * @param googleMap
+     * pass the map on which is being shown on the activity.
+     */
     @Override
     public void onMapReady(GoogleMap googleMap) {
+
         mGoogleMap = googleMap;
+        // type of map needed to display.
         mGoogleMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
         UiSettings uiSettings = googleMap.getUiSettings();
@@ -293,8 +250,6 @@ public class MapsActivity extends Progress
         uiSettings.setMapToolbarEnabled(true);
         uiSettings.setZoomControlsEnabled(false);
         googleMap.setTrafficEnabled(false);
-
-        //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,1000,0, (android.location.LocationListener) listener);
 
         //Initialize Google Play Services
         if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -310,6 +265,10 @@ public class MapsActivity extends Progress
         }
     }
 
+    /**
+     * call the api client needed to retrieve information.
+     * from google such as maps and the location API.
+     */
     protected synchronized void buildGoogleApiClient() {
         mGoogleApiClient = new GoogleApiClient.Builder(this)
                 .addConnectionCallbacks(this)
@@ -320,6 +279,12 @@ public class MapsActivity extends Progress
 
     }
 
+    /**
+     * call to location updates on when the device changes
+     * coordinates, its then updated on the map.
+     * @param bundle
+     * the information of the activity.
+     */
     @Override
     public void onConnected(Bundle bundle) {
 
@@ -328,10 +293,13 @@ public class MapsActivity extends Progress
                 == PackageManager.PERMISSION_GRANTED) {
             createLocationRequest();
             LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-            //startLocationUpdates();
         }
     }
 
+    /**
+     * when requesting location, needs interval set and what accuracy
+     * the developer wants to achieve.
+     */
     protected void createLocationRequest() {
 
         mLocationRequest = new LocationRequest();
@@ -345,6 +313,10 @@ public class MapsActivity extends Progress
         mLocationSettingsRequest = builder.build();
     }
 
+    /**
+     * used to focus the map view when the user moves.
+     * camera is then animated to find users coordinates.
+     */
     protected void startLocationUpdates() {
         LocationServices.SettingsApi.checkLocationSettings(
                 mGoogleApiClient,
@@ -378,16 +350,18 @@ public class MapsActivity extends Progress
                         Toast.makeText(MapsActivity.this, errorMessage, Toast.LENGTH_LONG).show();
                         mRequestingLocationUpdates = false;
                 }
-                //updateUI();
             }
         });
 
     }
 
+    /**
+     * It is a good practice to remove location requests when the activity is in a paused or
+     * stopped state. Doing so helps battery performance and is especially
+     * recommended in applications that request frequent location updates.
+     */
     protected void stopLocationUpdates() {
-        // It is a good practice to remove location requests when the activity is in a paused or
-        // stopped state. Doing so helps battery performance and is especially
-        // recommended in applications that request frequent location updates.
+
         LocationServices.FusedLocationApi.removeLocationUpdates(
                 mGoogleApiClient,
                 this
@@ -399,14 +373,18 @@ public class MapsActivity extends Progress
         });
     }
 
-    /* Activates this provider. This provider will notify the supplied listener
-         * periodically, until you call deactivate().
-         * This method is automatically invoked by enabling my-location layer. */
+    /** Activates this provider. This provider will notify the supplied listener
+     * periodically, until you call deactivate().
+     * This method is automatically invoked by enabling my-location layer.
+     */
     @Override
     public void activate(OnLocationChangedListener listener) {
         // We need to keep a reference to my-location layer's listener so we can push forward
         // location updates to it when we receive them from Location Manager.
         mListener = listener;
+        String bestAvailableProvider = LocationManager.GPS_PROVIDER;
+        long minTime = 1000;
+        float minDistance = 10;
 
         // Request location updates from Location Manager
         if (bestAvailableProvider != null) {
@@ -417,8 +395,9 @@ public class MapsActivity extends Progress
         }
     }
 
-    /* Deactivates this provider.
-     * This method is automatically invoked by disabling my-location layer. */
+    /** Deactivates this provider.
+     *  This method is automatically invoked by disabling my-location layer.
+     */
     @Override
     public void deactivate() {
         // Remove location updates from Location Manager
@@ -427,21 +406,27 @@ public class MapsActivity extends Progress
         mListener = null;
     }
 
+    /**
+     * when the location of the user is changed the method as follows is
+     * initiated.
+     * @param location
+     */
     @Override
     public void onLocationChanged(Location location) {
 
-        Log.d(TAG,"!!!!!!!!!!!!!!!!!"+location.getLatitude()+","+location.getLongitude());
-
+        // get the last location which was found on device.
         mLastLocation = location;
-        Log.d(TAG,"!!!!!!!!!!!!!!!!!"+location.getLatitude()+","+location.getLongitude());
+        //declare LatLng for coordinates of camera animation.
         LatLng latLng;
-        if (mCurrLocationMarker != null) {
-            mCurrLocationMarker.remove();
+
+        if (mGeofenceMarker != null) {
+            mGeofenceMarker.remove();
         }
 
         double latitude = 0;
         double longitude = 0;
         try {
+            // find the location from the Gps on the map.
             Location findMe = mGoogleMap.getMyLocation();
             latitude = findMe.getLatitude();
             longitude = findMe.getLongitude();
@@ -453,10 +438,12 @@ public class MapsActivity extends Progress
                 latLng = new LatLng(latitude, longitude);
             }
             else {
+                // use the location lat and long if map location cannot be found
                 latLng = new LatLng(location.getLatitude(), location.getLongitude());
             }
         }
 
+        // animation of the camera.
         CameraPosition cameraPosition = new CameraPosition.Builder()
                 .target(latLng)      // Sets the center of the map to Mountain View
                 .zoom(20)                   // Sets the zoom
@@ -465,10 +452,17 @@ public class MapsActivity extends Progress
                 .build();                   // Creates a CameraPosition from the builder
         mGoogleMap.animateCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
 
+        // clear anything not needed.
         mGoogleMap.clear();
 
+        /*
+        * used for the loading of all geofences which where called from firebase when
+        * the user has signed in.
+        */
         for (Map.Entry<String, LatLng> entry : Constants.LANDMARKS.entrySet()) {
 
+            // creation of the geofence colour and border colour.
+            // setting of each specific geofence.
             CircleOptions circleOptions = new CircleOptions()
                     .center(new LatLng(entry.getValue().latitude,entry.getValue().longitude))
                     .strokeColor(Color.argb(50, 70,70,70))
@@ -482,8 +476,11 @@ public class MapsActivity extends Progress
             markerOptions.position(geo);
             markerOptions.title(entry.getKey());
             markerOptions.icon(BitmapDescriptorFactory.fromResource(R.drawable.informe));//BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_MAGENTA)
-            mCurrLocationMarker = mGoogleMap.addMarker(markerOptions);
 
+            //adding marker to each geofence.
+            mGeofenceMarker = mGoogleMap.addMarker(markerOptions);
+
+            // add each to the geofence array list with the lat and long as well as the radius in meters.
             mGeofenceList.add(new Geofence.Builder()
                     .setRequestId(entry.getKey())
                     .setCircularRegion(
@@ -502,20 +499,26 @@ public class MapsActivity extends Progress
             LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
         }
 
-        if(test) {
+        // used to populate the check if user is in specific geofence.
+        if(populate) {
             try{
                 PopulateGeofences();
             }catch (IllegalStateException ex) {
 
             }
 
-            test = false;
+            populate = false;
         }
 
     }
 
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
+    /**
+     * used to check the location permission
+     * @return
+     * dialog if user has not set permissions
+     */
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -525,7 +528,6 @@ public class MapsActivity extends Progress
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)) {
 
-                //TODO:
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
                 // sees the explanation, try again to request the permission.
@@ -549,6 +551,15 @@ public class MapsActivity extends Progress
         }
     }
 
+    /**
+     *
+     * @param requestCode
+     * start to see if user connected
+     * @param permissions
+     * permissions which are needed for the application
+     * @param grantResults
+     * if the user has granted access to sensors.
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -584,6 +595,9 @@ public class MapsActivity extends Progress
         }
     }
 
+    /**
+     * used to see if user has entered a geofence.
+     */
     public void PopulateGeofences() {
         if (!mGoogleApiClient.isConnected()) {
             Toast.makeText(this, "Google API Client not connected!", Toast.LENGTH_SHORT).show();
@@ -601,25 +615,37 @@ public class MapsActivity extends Progress
         }
     }
 
+    /**
+     * get the geofence which is requested.
+     * @return
+     * to the pending intent.
+     */
     private GeofencingRequest getGeofencingRequest() {
         GeofencingRequest.Builder builder = new GeofencingRequest.Builder();
         builder.setInitialTrigger(GeofencingRequest.INITIAL_TRIGGER_ENTER);
         builder.addGeofences(mGeofenceList);
         return builder.build();
     }
+
+    /**
+     * sending the notification to the user when geofence is entered.
+     * @return
+     */
     private PendingIntent getGeofencePendingIntent() {
+
         Log.d(TAG, "Geo fence pending intent");
         Intent intent = new Intent(this, GeofenceTransitionsIntentService.class);
         // We use FLAG_UPDATE_CURRENT so that we get the same pending intent back when calling addgeoFences()
 
         return PendingIntent.getService(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-
     }
 
+    /**
+     * used for when the activity has started.
+     */
     @Override
     protected void onStart() {
-        // TODO Auto-generated method stub
-
+        // used as a broadcast receiver
         myReceiver = new myReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction(GeofenceTransitionsIntentService.MY_ACTION);
@@ -628,6 +654,9 @@ public class MapsActivity extends Progress
         super.onStart();
     }
 
+    /**
+     * used to register the proximity sensor of the device.
+     */
     @Override
     public void onResume() {
         super.onResume();
@@ -639,6 +668,9 @@ public class MapsActivity extends Progress
 
     }
 
+    /**
+     * used to stop the proximity sensor as well as the location provider.
+     */
     @Override
     public void onPause() {
         super.onPause();
@@ -660,6 +692,13 @@ public class MapsActivity extends Progress
         }
     }
 
+    /**
+     * used to check wheather the sensor is blocked or not
+     * which changes the brightness of the screen when on the
+     * map.
+     * @param event
+     * change of the screen brightness.
+     */
     public void onSensorChanged(SensorEvent event) {
         if (event.sensor.getType() == Sensor.TYPE_PROXIMITY) {
             if (event.values[0] >= -SENSOR_SENSITIVITY && event.values[0] <= SENSOR_SENSITIVITY) {
@@ -676,56 +715,89 @@ public class MapsActivity extends Progress
         }
     }
 
+    /**
+     * needed to call the sensor but not needed in this case.
+     * @param sensor
+     * what sensor are we using.
+     * @param accuracy
+     * the accuracy that is needed.
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
+    /**
+     * unregister the broadcast receiver.
+     */
     @Override
     public void onStop() {
-        // TODO Auto-generated method stub
         unregisterReceiver(myReceiver);
         super.onStop();
     }
 
+    /**
+     * when the connection has failed.
+     * @param result
+     * result returned when an error has been found.
+     */
     @Override
-    public void onConnectionFailed(ConnectionResult result) {
-        // Do something with result.getErrorCode());
-    }
+    public void onConnectionFailed(ConnectionResult result) { result.getErrorCode(); }
+
+    /**
+     * when the connection of the application has become suspended
+     * @param cause
+     * the cause of the activity becoming suspended.
+     */
     @Override
     public void onConnectionSuspended(int cause) {
         mGoogleApiClient.connect();
     }
 
+    /**
+     * when the geofences have been added a toast will appear.
+     * @param status
+     * see if the geofences have been added.
+     */
     public void onResult(Status status)
     {
         if (status.isSuccess()) {
-            Toast.makeText(
-                    this,
-                    "Geofences Added",
-                    Toast.LENGTH_SHORT
-            ).show();
+            Toast.makeText(this, "Geofences Added", Toast.LENGTH_SHORT).show();
         } else {
-            Toast.makeText(this,"No geo fence :(",Toast.LENGTH_SHORT).show();
+            Toast.makeText(this,"Sorry an Error has occurred",Toast.LENGTH_SHORT).show();
         }
     }
 
-
+    /**
+     * broadcast receiver used to produce the dialog on the map activity if user has entered
+     * a geofence.
+     */
     private class myReceiver extends BroadcastReceiver {
 
+        /**
+         * when an notification has been initiated it will be sent to the following
+         * dialog and will be sent to the users map to display.
+         * @param arg0
+         * the context of the intent
+         * @param arg1
+         * the intent
+         */
         @Override
         public void onReceive(Context arg0, Intent arg1) {
-            // TODO Auto-generated method stub
 
+            // getting the information from the GeofenceTransitionIntentService.
             final String datapassed = arg1.getStringExtra("DATAPASSED");
 
+            // display dialog to the specific user.
             new AlertDialog.Builder(MapsActivity.this)
                     .setTitle("Historic Monument")
                     .setMessage("Do you want to view information on the monument area you have entered ? - "+datapassed)
                     .setPositiveButton(android.R.string.yes, new DialogInterface.OnClickListener() {
                         public void onClick(DialogInterface dialog, int which) {
 
+                            // send user to the specific Information activity.
                             Intent monumentInformationIntent = new Intent(getApplicationContext(),InformationFlipActivity.class);
+                            // pass the name of the monument to the activity to retrieve information from firebase.
                             monumentInformationIntent.putExtra("monumentInformation", datapassed);
                             startActivity(monumentInformationIntent);
 

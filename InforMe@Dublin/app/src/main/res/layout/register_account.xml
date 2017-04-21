@@ -56,7 +56,8 @@
         android:ems="10"
         android:hint="Password"
         android:inputType="textPassword"
-        android:padding="10dp" />
+        android:padding="10dp"
+        android:password="true" />
 
     <Button
         android:id="@+id/registerButton"

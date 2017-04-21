@@ -3,6 +3,7 @@ package com.example.adamoconnor.test02maps.LoginAndRegister;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
@@ -35,6 +36,9 @@ public class RegisterAccount extends Progress {
 
     private static final String TAG = "RegisterAccount";
 
+    //declare boolean
+    private boolean valid;
+
     // declare the textviews etc...
     private EditText mNameField;
     private EditText mEmailField;
@@ -62,6 +66,9 @@ public class RegisterAccount extends Progress {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.register_account);
+
+        //setting screen orientation to stop fragments view showing on eachother.
+        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // getting users authentication of application.
         mAuth = FirebaseAuth.getInstance();
@@ -99,10 +106,34 @@ public class RegisterAccount extends Progress {
         mRegisterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startRegister();
+                validateForm();
+                if(valid){
+                    startRegister();
+                }else {
+                    Toast.makeText(RegisterAccount.this, "conditions are not correct",
+                            Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
+    }
+
+    /**
+     * used to get a random string needed to apply to the
+     * profile image of user to combat clashes with image names.
+     * @return
+     * return a random string.
+     */
+    public static String random() {
+        Random generator = new Random();
+        StringBuilder randomStringBuilder = new StringBuilder();
+        int randomLength = generator.nextInt(10);
+        char tempChar;
+        for (int i = 0; i < randomLength; i++){
+            tempChar = (char) (generator.nextInt(96) + 32);
+            randomStringBuilder.append(tempChar);
+        }
+        return randomStringBuilder.toString();
     }
 
     /**
@@ -113,19 +144,18 @@ public class RegisterAccount extends Progress {
 
         // used for getting the information from the user.
         final String name = mNameField.getText().toString().trim();
-        final String email = mEmailField.getText().toString().trim();
-        final String password = mPasswordField.getText().toString().trim();
 
         //set progress bar.
         mProgress = new ProgressDialog(RegisterAccount.this);
-        mProgress.setMessage("Registering user "+name+" ...");
+        mProgress.setMessage("Registering user ...");
+        mProgress.show();
 
-        // validate user has text in fields.
-        validateForm();
+        // used for getting the information from the user.
+        final String email = mEmailField.getText().toString().trim();
+        final String password = mPasswordField.getText().toString().trim();
 
         //check if image is not selected.
         if(mImageUri != null) {
-
 
                 // START create_user_with_email and password.
                 mAuth.createUserWithEmailAndPassword(email, password)
@@ -140,7 +170,7 @@ public class RegisterAccount extends Progress {
 
                                     // updated username in shared preferences.
                                     SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                                    SharedPreferences.Editor settingsEditor =  preferences.edit();
+                                    SharedPreferences.Editor settingsEditor = preferences.edit();
                                     settingsEditor.putString("name_preference", name);
                                     settingsEditor.apply();
 
@@ -165,7 +195,12 @@ public class RegisterAccount extends Progress {
                                         @Override
                                         public void run() {
                                             try {
-                                                Thread.sleep(3000);
+                                                Thread.sleep(4000);
+
+                                                mProgress.dismiss();
+                                                Intent mainIntent = new Intent(RegisterAccount.this, EmailPasswordAuthentication.class);
+                                                mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                                startActivity(mainIntent);
 
                                             } catch (InterruptedException e) {
                                                 e.printStackTrace();
@@ -173,10 +208,6 @@ public class RegisterAccount extends Progress {
                                         }
                                     }).start();
 
-                                    mProgress.dismiss();
-                                    Intent mainIntent = new Intent(RegisterAccount.this, EmailPasswordAuthentication.class);
-                                    mainIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                    startActivity(mainIntent);
                                 }
                                 // If sign in fails, display a message to the user. If sign in succeeds
                                 // the auth state listener will be notified and logic to handle the
@@ -188,6 +219,7 @@ public class RegisterAccount extends Progress {
 
                             }
                         });
+
         } else {
             Toast.makeText(RegisterAccount.this, "Please select an Image for your profile.",
                     Toast.LENGTH_SHORT).show();
@@ -196,30 +228,13 @@ public class RegisterAccount extends Progress {
     }
 
     /**
-     * used for setting the images name which is added to the storage,
-     * database as some images may have the same name.
-     * @return
-     * return random string.
-     */
-    public static String random() {
-        Random generator = new Random();
-        StringBuilder randomStringBuilder = new StringBuilder();
-        int randomLength = generator.nextInt(10);
-        char tempChar;
-        for (int i = 0; i < randomLength; i++){
-            tempChar = (char) (generator.nextInt(96) + 32);
-            randomStringBuilder.append(tempChar);
-        }
-        return randomStringBuilder.toString();
-    }
-
-    /**
      * used to validate the registration form.
      * @return
      * return the error if user has not entered text.
      */
     private boolean validateForm() {
-        boolean valid = true;
+
+        valid = true;
 
         String email = mEmailField.getText().toString();
         if (TextUtils.isEmpty(email)) {
@@ -238,12 +253,19 @@ public class RegisterAccount extends Progress {
         }
 
         String password = mPasswordField.getText().toString();
+        int size = password.length();
         if (TextUtils.isEmpty(password)) {
             mPasswordField.setError("Required.");
             valid = false;
-        } else {
-            mPasswordField.setError(null);
-        }
+        } else
+            if(size < 6) {
+                Toast.makeText(RegisterAccount.this, "password is too short the minimum length is 6 characters",
+                        Toast.LENGTH_LONG).show();
+                valid = false;
+            }
+            else {
+                mPasswordField.setError(null);
+            }
 
         return valid;
     }

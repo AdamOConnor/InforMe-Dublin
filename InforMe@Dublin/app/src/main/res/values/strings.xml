@@ -134,6 +134,7 @@
     <string name="reset_password">Reset Password</string>
     <string name="settings">settings</string>
     <string name="reset_password_activity">reset password</string>
+    <string name="update_post">update Post</string>
 
 </resources>
 

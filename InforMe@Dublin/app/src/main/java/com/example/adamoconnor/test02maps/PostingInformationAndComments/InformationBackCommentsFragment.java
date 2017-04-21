@@ -37,12 +37,17 @@ import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.getMonu
 
 public class InformationBackCommentsFragment extends Fragment {
 
+    // declare recycler view.
     private RecyclerView commentList;
-    private DatabaseReference mDatabase;
-    private static ProgressDialog mProgress;
-    private ImageView post_image;
+
+    //declare boolean.
     private boolean mValueLike = false;
+
+    //declare database references.
+    private DatabaseReference mDatabase;
     private DatabaseReference mDatabaseLike;
+
+    //declare firebase authentication.
     private FirebaseAuth mAuth;
 
     @Override
@@ -51,19 +56,27 @@ public class InformationBackCommentsFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_card_back, container, false);
         setHasOptionsMenu(true);
 
+        // get instance of the firebase databases.
         mDatabase = FirebaseDatabase.getInstance().getReference().child("comments").child(getMonumentName());
         mDatabaseLike = FirebaseDatabase.getInstance().getReference().child("likes");
+
+        //get the firebase authentication instance.
         mAuth = FirebaseAuth.getInstance();
 
+        //keep both database references synced.
         mDatabase.keepSynced(true);
         mDatabaseLike.keepSynced(true);
 
+        //declare the RecyclerView with reference to the layout.
         commentList = (RecyclerView) view.findViewById(R.id.comment_list);
         commentList.setHasFixedSize(true);
         commentList.setLayoutManager(new LinearLayoutManager(getActivity()));
         return view;
     }
 
+    /**
+     * when the activity is called.
+     */
     @Override
     public void onStart() {
         super.onStart();
@@ -76,6 +89,15 @@ public class InformationBackCommentsFragment extends Fragment {
 
         ) {
 
+            /**
+             * used to populate each post on the specific monument.
+             * @param viewHolder
+             * holder of information
+             * @param model
+             * used as a reference to comment model.
+             * @param position
+             * where on the view each attribute is located.
+             */
             protected void populateViewHolder(final CommentHolder viewHolder,final Comments model, int position) {
 
                 final String post_key = getRef(position).getKey();
@@ -92,18 +114,14 @@ public class InformationBackCommentsFragment extends Fragment {
                     @Override
                     public void onClick(View v) {
 
-                       // Toast.makeText(getContext(), post_key, Toast.LENGTH_LONG).show();
-
                         Intent viewComments = new Intent(getActivity(), CommentsActivity.class);
                         viewComments.putExtra("post_id", post_key);
                         viewComments.putExtra("location_id", getMonumentName());
                         startActivity(viewComments);
-
-
                     }
                 });
 
-
+                // used to set like button
                 viewHolder.likeButton.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -140,15 +158,13 @@ public class InformationBackCommentsFragment extends Fragment {
         };
 
         commentList.setAdapter(firebaseRecyclerAdapter);
-
     }
 
-    @Override
-    public void onConfigurationChanged(Configuration newConfig) {
-        super.onConfigurationChanged(newConfig);
-        //here you can handle orientation change
-    }
 
+    /**
+     * comment holder used to populate the layouts
+     * attributes.
+     */
     public static class CommentHolder extends RecyclerView.ViewHolder {
 
         View mView;
@@ -171,6 +187,11 @@ public class InformationBackCommentsFragment extends Fragment {
 
         }
 
+        /**
+         * setting the number of likes of the posted monument
+         * @param post_key
+         * get the post key to find number of likes.
+         */
         public void setLikes(final String post_key) {
 
             mDatabaseLikes.addValueEventListener(new ValueEventListener() {
@@ -196,6 +217,11 @@ public class InformationBackCommentsFragment extends Fragment {
 
         }
 
+        /**
+         * setting the title
+         * @param title
+         * setting the title to textView.
+         */
         public void setTitle(String title) {
 
             TextView post_title = (TextView) mView.findViewById(R.id.commentTitle);
@@ -203,6 +229,11 @@ public class InformationBackCommentsFragment extends Fragment {
 
         }
 
+        /**
+         * setting the description
+         * @param description
+         * setting the description to textView
+         */
         public void setDescription(String description) {
 
             TextView post_description = (TextView) mView.findViewById(R.id.commentDescription);
@@ -210,6 +241,13 @@ public class InformationBackCommentsFragment extends Fragment {
 
         }
 
+        /**
+         * setting the image of the post
+         * @param mContext
+         * the context of the activity
+         * @param image
+         * the url string to load with picasso
+         */
         public void setImage(final Context mContext,final String image) {
 
             final ImageView post_image = (ImageView) mView.findViewById(R.id.commentImage);
@@ -217,12 +255,22 @@ public class InformationBackCommentsFragment extends Fragment {
 
         }
 
+        /**
+         * setting the username into textView
+         * @param username
+         * username to set to textView.
+         */
         public void setUsername(String username) {
 
             TextView post_username = (TextView) mView.findViewById(R.id.commentUsername);
             post_username.setText("Posted by : "+username);
         }
 
+        /**
+         * setting the time of the post description.
+         * @param timestamp
+         * long timestamp to change to data and time.
+         */
         public void setTime(Long timestamp) {
 
             TextView post_username = (TextView) mView.findViewById(R.id.commentTime);
@@ -237,6 +285,13 @@ public class InformationBackCommentsFragment extends Fragment {
 
         }
 
+        /**
+         * setting of the profile image of the user who posted.
+         * @param mContext
+         * activity which is shown.
+         * @param profile
+         * string reference for the url to load.
+         */
         public void setProfileImage(final Context mContext, final String profile) {
 
             ImageView post_image = (ImageView) mView.findViewById(R.id.commentProfile);
@@ -248,6 +303,13 @@ public class InformationBackCommentsFragment extends Fragment {
         }
     }
 
+    /**
+     * creation of the menu options.
+     * @param menu
+     * menu reference.
+     * @param inflater
+     * inflater reference.
+     */
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         // TODO Add your menu entries here
@@ -255,6 +317,13 @@ public class InformationBackCommentsFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
     }
 
+    /**
+     * post information on historic monument.
+     * @param item
+     * selected item
+     * @return
+     * the options
+     */
     public boolean onOptionsItemSelected(MenuItem item) {
 
         if(item.getItemId() == R.id.action_add) {
@@ -264,13 +333,18 @@ public class InformationBackCommentsFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
-
+    /**
+     * resume method.
+     */
     @Override
     public void onResume() {
         super.onResume();  // Always call the superclass method first
 
     }
 
+    /**
+     * pause method.
+     */
     @Override
     public void onPause() {
         super.onPause();  // Always call the superclass method first
