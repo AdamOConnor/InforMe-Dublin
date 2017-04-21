@@ -1,11 +1,15 @@
 package com.example.adamoconnor.test02maps.LoginAndRegister;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.preference.PreferenceManager;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -14,6 +18,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.example.adamoconnor.test02maps.R;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -59,6 +64,9 @@ public class SetupActivity extends AppCompatActivity {
 
         //setting screen orientation to stop fragments view showing on eachother.
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        // grant permission.
+        isStoragePermissionGranted();
 
         //initiate progress bar.
         mProgress = new ProgressDialog(this);
@@ -139,11 +147,6 @@ public class SetupActivity extends AppCompatActivity {
                     @SuppressWarnings("VisibleForTests")
                     String downloadUri = taskSnapshot.getDownloadUrl().toString();
 
-                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                    SharedPreferences.Editor settingsEditor =  preferences.edit();
-                    settingsEditor.putString("name_preference", name);
-                    settingsEditor.apply();
-
                     mDatabaseUsers.child(user_id).child("name").setValue(name);
                     mDatabaseUsers.child(user_id).child("image").setValue(downloadUri);
 
@@ -201,5 +204,32 @@ public class SetupActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    /**
+     * getting android permission to access storage for the device.
+     * @return
+     * return true or false
+     */
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                return true;
+            } else {
+                //permission revoked
+                Toast.makeText(SetupActivity.this, "Permission is revoked", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                Intent backIntent = new Intent(SetupActivity.this, EmailPasswordAuthentication.class);
+                backIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                backIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(backIntent);
+                return false;
+            }
+        }
+        else {
+            //permission is automatically granted on sdk<23 upon installation
+            return true;
+        }
     }
 }

@@ -1,14 +1,19 @@
 package com.example.adamoconnor.test02maps.LoginAndRegister;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.ActivityInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -69,6 +74,8 @@ public class RegisterAccount extends Progress {
 
         //setting screen orientation to stop fragments view showing on eachother.
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
+
+        isStoragePermissionGranted();
 
         // getting users authentication of application.
         mAuth = FirebaseAuth.getInstance();
@@ -167,12 +174,6 @@ public class RegisterAccount extends Progress {
 
                                     // getting current users authenticated id.
                                     final String user_id = mAuth.getCurrentUser().getUid();
-
-                                    // updated username in shared preferences.
-                                    SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(getApplicationContext());
-                                    SharedPreferences.Editor settingsEditor = preferences.edit();
-                                    settingsEditor.putString("name_preference", name);
-                                    settingsEditor.apply();
 
                                     StorageReference filepath = mStorageImage.child(random());
                                     filepath.putFile(mImageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
@@ -314,5 +315,35 @@ public class RegisterAccount extends Progress {
             }
         }
 
+    }
+
+    /**
+     * getting android permission to access storage for the device.
+     * @return
+     * return true or false
+     */
+    public  boolean isStoragePermissionGranted() {
+        if (Build.VERSION.SDK_INT >= 23) {
+            if (checkSelfPermission(android.Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                    == PackageManager.PERMISSION_GRANTED) {
+                Toast.makeText(RegisterAccount.this, "Permission is granted", Toast.LENGTH_SHORT).show();
+                Log.v(TAG,"Permission is granted");
+                return true;
+            } else {
+
+                Log.v(TAG,"Permission is revoked");
+                Toast.makeText(RegisterAccount.this, "Permission is revoked", Toast.LENGTH_SHORT).show();
+                ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1);
+                Intent backIntent = new Intent(RegisterAccount.this, EmailPasswordAuthentication.class);
+                backIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                backIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                startActivity(backIntent);
+                return false;
+            }
+        }
+        else { //permission is automatically granted on sdk<23 upon installation
+            Log.v(TAG,"Permission is granted");
+            return true;
+        }
     }
 }

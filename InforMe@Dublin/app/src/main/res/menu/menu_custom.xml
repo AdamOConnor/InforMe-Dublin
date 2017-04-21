@@ -3,11 +3,8 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item android:id="@+id/action_add"
-        android:icon="@mipmap/ic_add_black_24dp"
+        android:icon="@drawable/addbutton"
         android:title="Add Post"
         app:showAsAction="ifRoom"/>
 
-    <item android:id="@+id/action_settings"
-        android:title="Settings"
-        app:showAsAction="never"/>
 </menu>

@@ -18,6 +18,8 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
+
+import com.example.adamoconnor.test02maps.LoginAndRegister.EmailPasswordAuthentication;
 import com.example.adamoconnor.test02maps.LoginAndRegister.Progress;
 import com.example.adamoconnor.test02maps.PostingInformationAndComments.AddInformation;
 import com.example.adamoconnor.test02maps.PostingInformationAndComments.InformationFlipActivity;
@@ -586,6 +588,10 @@ public class MapsActivity extends Progress
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
                     Toast.makeText(this, "permission denied", Toast.LENGTH_LONG).show();
+                    Intent backIntent = new Intent(MapsActivity.this, EmailPasswordAuthentication.class);
+                    backIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    backIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(backIntent);
                 }
                 return;
             }

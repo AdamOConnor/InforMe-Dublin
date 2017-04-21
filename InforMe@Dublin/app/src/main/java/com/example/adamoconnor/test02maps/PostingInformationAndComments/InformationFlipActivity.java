@@ -127,8 +127,8 @@ public class InformationFlipActivity extends AppCompatActivity
                         ? R.string.action_photo
                         : R.string.action_info);
         item.setIcon(mShowingBack
-                ? R.drawable.ic_action_photo
-                : R.drawable.ic_action_info);
+                ? R.drawable.info
+                : R.drawable.posts);
         item.setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
         return true;
     }
