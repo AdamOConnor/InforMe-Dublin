@@ -306,6 +306,10 @@ public class PostActivity extends AppCompatActivity {
                     }
 
                 });
+            } else {
+                mProgress.dismiss();
+                Toast.makeText(PostActivity.this, "Please fill in the form...",
+                        Toast.LENGTH_LONG).show();
             }
         }
 

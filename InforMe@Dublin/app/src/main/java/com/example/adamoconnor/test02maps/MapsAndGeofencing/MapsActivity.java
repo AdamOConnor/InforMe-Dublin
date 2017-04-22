@@ -157,30 +157,6 @@ public class MapsActivity extends Progress
             mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         }
 
-        // create a new thread to start the focusing method for the view on the map.
-        new Thread(new Runnable() {
-            @Override
-
-            public void run() {
-                Looper.prepare();
-                try {
-                    Thread.sleep(5000);
-                    h = new Handler();
-                    final int delay = 2000; //milliseconds
-
-                    h.postDelayed(myrunnable = new Runnable(){
-                        public void run(){
-                            startLocationUpdates();
-                            h.postDelayed(this, delay);
-                        }
-                    }, delay);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                Looper.loop();
-            }
-        }).start();
-
         // used to send email of new monument to InforMe@Dublin.
         FloatingActionButton addInfo = (FloatingActionButton)  this.findViewById(R.id.floatingAddInfoButton);
         addInfo.setOnClickListener(new View.OnClickListener() {
@@ -212,6 +188,7 @@ public class MapsActivity extends Progress
                     // The toggle is disabled
                     toggle.setBackgroundTintList(ColorStateList.valueOf(getResources().getColor(R.color.TransparetNonFocus)));
                     try {
+                        h.removeCallbacks(myrunnable);
                         h.removeCallbacks(myrunnable);
                         h.removeCallbacks(myrunnable);
                     }catch (NullPointerException ex) {
@@ -653,6 +630,30 @@ public class MapsActivity extends Progress
         intentFilter.addAction(GeofenceTransitionsIntentService.MY_ACTION);
         registerReceiver(myReceiver, intentFilter);
 
+        // create a new thread to start the focusing method for the view on the map.
+        new Thread(new Runnable() {
+            @Override
+
+            public void run() {
+                Looper.prepare();
+                try {
+                    Thread.sleep(5000);
+                    h = new Handler();
+                    final int delay = 2000; //milliseconds
+
+                    h.postDelayed(myrunnable = new Runnable(){
+                        public void run(){
+                            startLocationUpdates();
+                            h.postDelayed(this, delay);
+                        }
+                    }, delay);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                Looper.loop();
+            }
+        }).start();
+
         super.onStart();
     }
 
@@ -676,6 +677,9 @@ public class MapsActivity extends Progress
     @Override
     public void onPause() {
         super.onPause();
+
+        h.removeCallbacks(myrunnable);
+        h.removeCallbacks(myrunnable);
 
         //stop location updates when Activity is no longer active
         try {
@@ -734,6 +738,8 @@ public class MapsActivity extends Progress
      */
     @Override
     public void onStop() {
+        h.removeCallbacks(myrunnable);
+        h.removeCallbacks(myrunnable);
         unregisterReceiver(myReceiver);
         super.onStop();
     }

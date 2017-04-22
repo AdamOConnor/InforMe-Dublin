@@ -512,8 +512,6 @@ public class EmailPasswordAuthentication extends Progress implements
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     if(dataSnapshot.hasChild(user_id)) {
 
-                        Toast.makeText(EmailPasswordAuthentication.this, "Authentication successful",
-                                Toast.LENGTH_SHORT).show();
                     }
                     else
                         {
