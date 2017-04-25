@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps;
+package adamoconnor.informe;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;

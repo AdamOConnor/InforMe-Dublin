@@ -19,7 +19,51 @@
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.adamoconnor.test02maps",
-            "certificate_hash": "9BC34B6389A734BFF6BDD9C305E42127343EDDED"
+            "certificate_hash": "9bc34b6389a734bff6bdd9c305e42127343edded"
+          }
+        },
+        {
+          "client_id": "1033201169929-jfn3m2f5qk2eh5nkbairpg02qbkoe00u.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5P0wPErDhqzFRMDwmZkPB-Pq-JShltaI"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1033201169929-jfn3m2f5qk2eh5nkbairpg02qbkoe00u.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1033201169929:android:464221bc1204f8f4",
+        "android_client_info": {
+          "package_name": "adamoconnor.informe"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1033201169929-8imko2b4j0arb53eslfgjii8voe18tu3.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "adamoconnor.informe",
+            "certificate_hash": "9bc34b6389a734bff6bdd9c305e42127343edded"
           }
         },
         {

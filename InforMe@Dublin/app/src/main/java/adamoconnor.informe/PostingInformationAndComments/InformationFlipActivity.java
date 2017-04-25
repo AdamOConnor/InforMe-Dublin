@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps.PostingInformationAndComments;
+package adamoconnor.informe.PostingInformationAndComments;
 
 import android.app.FragmentManager;
 import android.content.Intent;
@@ -10,9 +10,9 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import com.example.adamoconnor.test02maps.MapsAndGeofencing.MapsActivity;
-import com.example.adamoconnor.test02maps.R;
-import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.setMonumentName;
+import adamoconnor.informe.MapsAndGeofencing.MapsActivity;
+import adamoconnor.informe.R;
+import static adamoconnor.informe.MapsAndGeofencing.Place.setMonumentName;
 
 /**
  * Demonstrates a "card-flip" animation using custom fragment transactions ({@link

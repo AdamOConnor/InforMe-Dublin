@@ -1,15 +1,15 @@
-package com.example.adamoconnor.test02maps.PostingInformationAndComments;
+package adamoconnor.informe.MapsAndGeofencing;
 
 import android.content.ClipData;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,10 +17,11 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-import com.example.adamoconnor.test02maps.R;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+
+import adamoconnor.informe.R;
 
 public class AddInformation extends AppCompatActivity {
 
@@ -85,7 +86,7 @@ public class AddInformation extends AppCompatActivity {
 
                 if(validateForm()) {
                     email("informedublinproject@gmail.com","",
-                            "Add New Monument - InforMe@Dublin","Monument Name : "+monumentName.getText()+"\n"
+                            "Add New Monument - adamoconnor.informe","Monument Name : "+monumentName.getText()+"\n"
                                     +"Location : "+location.getSelectedItem().toString()
                                     +"\n"+"Area name : "+areaName.getText()+"\n"+"Monument Information : "+monumentInformation.getText());
                 }
@@ -241,9 +242,9 @@ public class AddInformation extends AppCompatActivity {
         //need to "send multiple" to get more than one attachment
         final Intent emailIntent = new Intent(Intent.ACTION_SEND_MULTIPLE);
         emailIntent.setType("text/xml");
-        emailIntent.putExtra(android.content.Intent.EXTRA_EMAIL,
+        emailIntent.putExtra(Intent.EXTRA_EMAIL,
                 new String[]{emailTo});
-        emailIntent.putExtra(android.content.Intent.EXTRA_CC,
+        emailIntent.putExtra(Intent.EXTRA_CC,
                 new String[]{emailCC});
         emailIntent.putExtra(Intent.EXTRA_SUBJECT, subject);
         emailIntent.putExtra(Intent.EXTRA_TEXT, emailText);

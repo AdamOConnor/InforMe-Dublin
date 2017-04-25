@@ -1,9 +1,10 @@
-package com.example.adamoconnor.test02maps.LoginAndRegister;
+package adamoconnor.informe.LoginAndRegister;
 
 import android.app.ProgressDialog;
 import android.support.annotation.VisibleForTesting;
 import android.support.v7.app.AppCompatActivity;
-import com.example.adamoconnor.test02maps.R;
+
+import adamoconnor.informe.R;
 
 public class Progress extends AppCompatActivity {
 

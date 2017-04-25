@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps.MapsAndGeofencing;
+package adamoconnor.informe.MapsAndGeofencing;
 
 import android.Manifest;
 import android.app.PendingIntent;
@@ -18,22 +18,14 @@ import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
 import android.location.Location;
-
-import com.example.adamoconnor.test02maps.LoginAndRegister.EmailPasswordAuthentication;
-import com.example.adamoconnor.test02maps.LoginAndRegister.Progress;
-import com.example.adamoconnor.test02maps.PostingInformationAndComments.AddInformation;
-import com.example.adamoconnor.test02maps.PostingInformationAndComments.InformationFlipActivity;
-import com.example.adamoconnor.test02maps.R;
-import com.example.adamoconnor.test02maps.Settings.CheckConnectivity;
-import com.google.android.gms.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.ActivityCompat;
-import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.util.Log;
@@ -42,12 +34,17 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.Toast;
 import android.widget.ToggleButton;
+import adamoconnor.informe.LoginAndRegister.Progress;
+import adamoconnor.informe.PostingInformationAndComments.InformationFlipActivity;
+import adamoconnor.informe.R;
+import adamoconnor.informe.Settings.CheckConnectivity;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofencingRequest;
+import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.LocationSettingsRequest;
@@ -65,9 +62,11 @@ import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+
 import java.util.ArrayList;
 import java.util.Map;
-import static com.example.adamoconnor.test02maps.R.id.map;
+
+import static adamoconnor.informe.R.id.map;
 
 public class MapsActivity extends Progress
         implements OnMapReadyCallback,
@@ -139,7 +138,7 @@ public class MapsActivity extends Progress
         this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 
         // check permission if build is marshmallow or over.
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             checkLocationPermission();
         }
 
@@ -157,7 +156,7 @@ public class MapsActivity extends Progress
             mProximity = mSensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
         }
 
-        // used to send email of new monument to InforMe@Dublin.
+        // used to send email of new monument to adamoconnor.informe.
         FloatingActionButton addInfo = (FloatingActionButton)  this.findViewById(R.id.floatingAddInfoButton);
         addInfo.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -231,7 +230,7 @@ public class MapsActivity extends Progress
         googleMap.setTrafficEnabled(false);
 
         //Initialize Google Play Services
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if (ContextCompat.checkSelfPermission(this,
                     Manifest.permission.ACCESS_FINE_LOCATION)
                     == PackageManager.PERMISSION_GRANTED) {
@@ -438,7 +437,7 @@ public class MapsActivity extends Progress
         * used for the loading of all geofences which where called from firebase when
         * the user has signed in.
         */
-        for (Map.Entry<String, LatLng> entry : Constants.LANDMARKS.entrySet()) {
+        for (Map.Entry<String, LatLng> entry : adamoconnor.informe.MapsAndGeofencing.Constants.LANDMARKS.entrySet()) {
 
             // creation of the geofence colour and border colour.
             // setting of each specific geofence.
@@ -465,9 +464,9 @@ public class MapsActivity extends Progress
                     .setCircularRegion(
                             entry.getValue().latitude,
                             entry.getValue().longitude,
-                            Constants.GEOFENCE_RADIUS_IN_METERS
+                            adamoconnor.informe.MapsAndGeofencing.Constants.GEOFENCE_RADIUS_IN_METERS
                     )
-                    .setExpirationDuration(Constants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
+                    .setExpirationDuration(adamoconnor.informe.MapsAndGeofencing.Constants.GEOFENCE_EXPIRATION_IN_MILLISECONDS)
                     .setTransitionTypes(Geofence.GEOFENCE_TRANSITION_ENTER |
                             Geofence.GEOFENCE_TRANSITION_EXIT)
                     .build());
@@ -627,7 +626,7 @@ public class MapsActivity extends Progress
         // used as a broadcast receiver
         myReceiver = new myReceiver();
         IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction(GeofenceTransitionsIntentService.MY_ACTION);
+        intentFilter.addAction(adamoconnor.informe.MapsAndGeofencing.GeofenceTransitionsIntentService.MY_ACTION);
         registerReceiver(myReceiver, intentFilter);
 
         // create a new thread to start the focusing method for the view on the map.

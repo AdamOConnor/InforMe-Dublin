@@ -1,8 +1,7 @@
-package com.example.adamoconnor.test02maps.PostingInformationAndComments;
+package adamoconnor.informe.PostingInformationAndComments;
 
 import android.app.Fragment;
 import android.app.ProgressDialog;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.text.TextUtils;
@@ -18,8 +17,8 @@ import com.daimajia.slider.library.SliderLayout;
 import com.daimajia.slider.library.SliderTypes.BaseSliderView;
 import com.daimajia.slider.library.SliderTypes.TextSliderView;
 import com.daimajia.slider.library.Tricks.ViewPagerEx;
-import com.example.adamoconnor.test02maps.MapsAndGeofencing.Place;
-import com.example.adamoconnor.test02maps.R;
+import adamoconnor.informe.MapsAndGeofencing.Place;
+import adamoconnor.informe.R;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,7 +26,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import java.util.HashMap;
 import java.util.Locale;
-import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.getMonumentName;
+import static adamoconnor.informe.MapsAndGeofencing.Place.getMonumentName;
 
 public class InformationFrontFragment extends Fragment implements BaseSliderView.OnSliderClickListener, ViewPagerEx.OnPageChangeListener {
 

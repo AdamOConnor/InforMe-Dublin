@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps.Settings;
+package adamoconnor.informe.Settings;
 
 import android.app.Activity;
 import android.content.Context;
@@ -10,7 +10,7 @@ import android.os.Build;
 import android.provider.Settings;
 import android.support.v7.app.AlertDialog;
 import android.text.TextUtils;
-import com.example.adamoconnor.test02maps.R;
+import adamoconnor.informe.R;
 
 public class CheckConnectivity {
 

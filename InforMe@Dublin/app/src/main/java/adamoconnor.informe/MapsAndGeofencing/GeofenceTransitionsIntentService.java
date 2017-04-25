@@ -1,24 +1,25 @@
-package com.example.adamoconnor.test02maps.MapsAndGeofencing;
+package adamoconnor.informe.MapsAndGeofencing;
 
 import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.BitmapFactory;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.SystemClock;
 import android.preference.PreferenceManager;
 import android.support.v4.app.NotificationCompat;
 import android.text.TextUtils;
 import android.util.Log;
-import com.example.adamoconnor.test02maps.PostingInformationAndComments.InformationFlipActivity;
-import com.example.adamoconnor.test02maps.R;
+import adamoconnor.informe.PostingInformationAndComments.InformationFlipActivity;
+import adamoconnor.informe.R;
 import com.google.android.gms.location.Geofence;
 import com.google.android.gms.location.GeofenceStatusCodes;
 import com.google.android.gms.location.GeofencingEvent;
-import android.net.Uri;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -76,13 +77,23 @@ public class GeofenceTransitionsIntentService extends IntentService {
         String sound = null;
 
         //declare URI for sound.
-        Uri notificationSound;
+        Uri notificationSound = null;
 
         //declare int for the vibration.
         int vibrationSet;
 
         // set the sound of the preferences.
-        notificationSound = Uri.parse(preferences.getString("notifications_new_message_ringtone",sound));
+        try {
+            notificationSound = Uri.parse(preferences.getString("notifications_new_message_ringtone",sound));
+        }catch (NullPointerException ex) {
+
+        }
+
+        if(notificationSound == null) {
+            notificationSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+
+        }
+
 
         //set the vibration.
         if(preferences.getBoolean("notifications_new_message_vibrate",true) == true) {

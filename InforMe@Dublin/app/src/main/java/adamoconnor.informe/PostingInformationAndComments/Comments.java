@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps.PostingInformationAndComments;
+package adamoconnor.informe.PostingInformationAndComments;
 
 
 public class Comments {

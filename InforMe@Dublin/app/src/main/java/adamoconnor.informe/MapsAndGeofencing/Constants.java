@@ -1,9 +1,10 @@
-package com.example.adamoconnor.test02maps.MapsAndGeofencing;
+package adamoconnor.informe.MapsAndGeofencing;
 
 
-import com.google.android.gms.maps.model.LatLng;
-import java.util.HashMap;
 import com.google.android.gms.location.Geofence;
+import com.google.android.gms.maps.model.LatLng;
+
+import java.util.HashMap;
 
 public class Constants {
 

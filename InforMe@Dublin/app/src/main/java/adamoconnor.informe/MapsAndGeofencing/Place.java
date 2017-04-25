@@ -1,4 +1,4 @@
-package com.example.adamoconnor.test02maps.MapsAndGeofencing;
+package adamoconnor.informe.MapsAndGeofencing;
 
 public class Place {
 

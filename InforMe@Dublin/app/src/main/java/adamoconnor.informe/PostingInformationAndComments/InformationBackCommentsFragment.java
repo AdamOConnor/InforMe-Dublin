@@ -1,14 +1,11 @@
-package com.example.adamoconnor.test02maps.PostingInformationAndComments;
+package adamoconnor.informe.PostingInformationAndComments;
 
 import android.app.Fragment;
-import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,8 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-
-import com.example.adamoconnor.test02maps.R;
+import adamoconnor.informe.R;
 import com.firebase.ui.database.FirebaseRecyclerAdapter;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -28,11 +24,10 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.like.LikeButton;
 import com.squareup.picasso.Picasso;
-
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Place.getMonumentName;
+import static adamoconnor.informe.MapsAndGeofencing.Place.getMonumentName;
 
 
 public class InformationBackCommentsFragment extends Fragment {
@@ -98,7 +93,7 @@ public class InformationBackCommentsFragment extends Fragment {
              * @param position
              * where on the view each attribute is located.
              */
-            protected void populateViewHolder(final CommentHolder viewHolder,final Comments model, int position) {
+            protected void populateViewHolder(final CommentHolder viewHolder, final Comments model, int position) {
 
                 final String post_key = getRef(position).getKey();
 

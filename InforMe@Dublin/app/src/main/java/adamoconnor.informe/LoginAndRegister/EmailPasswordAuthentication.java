@@ -1,5 +1,6 @@
-package com.example.adamoconnor.test02maps.LoginAndRegister;
+package adamoconnor.informe.LoginAndRegister;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +11,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
@@ -21,10 +23,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
-import com.example.adamoconnor.test02maps.MapsAndGeofencing.MapsActivity;
-import com.example.adamoconnor.test02maps.R;
-import com.example.adamoconnor.test02maps.Settings.CheckConnectivity;
-import com.example.adamoconnor.test02maps.Settings.SettingsActivity;
+import adamoconnor.informe.MapsAndGeofencing.MapsActivity;
+import adamoconnor.informe.R;
+import adamoconnor.informe.Settings.CheckConnectivity;
+import adamoconnor.informe.Settings.SettingsActivity;
 import com.google.android.gms.auth.api.Auth;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
@@ -45,12 +47,11 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import android.support.annotation.NonNull;
 import java.util.List;
 import java.util.Locale;
-import static com.example.adamoconnor.test02maps.MapsAndGeofencing.Constants.LANDMARKS;
-import static com.example.adamoconnor.test02maps.R.id.resetPassword;
-import static com.example.adamoconnor.test02maps.R.id.settings_prefs;
+import static adamoconnor.informe.MapsAndGeofencing.Constants.LANDMARKS;
+import static adamoconnor.informe.R.id.resetPassword;
+import static adamoconnor.informe.R.id.settings_prefs;
 
 public class EmailPasswordAuthentication extends Progress implements
         View.OnClickListener {
@@ -131,6 +132,8 @@ public class EmailPasswordAuthentication extends Progress implements
                 updateUI(user);
             }
         };
+
+        checkLocationPermission();
 
         // used for the requesting of google authentication token.
         GoogleSignInOptions googleLog = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
@@ -233,21 +236,18 @@ public class EmailPasswordAuthentication extends Progress implements
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
 
     /**
-     * used for the checking of permissions for the use of location
-     * services which cannot be just added to the manifest file.
-     *
+     * used to check the location permission
      * @return
-     * return dialog on which user must choose to accept application
-     * access.
+     * dialog if user has not set permissions
      */
     public boolean checkLocationPermission() {
         if (ContextCompat.checkSelfPermission(this,
-                android.Manifest.permission.ACCESS_FINE_LOCATION)
+                Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
             // Should we show an explanation?
             if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    android.Manifest.permission.ACCESS_FINE_LOCATION)) {
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
 
                 // Show an expanation to the user *asynchronously* -- don't block
                 // this thread waiting for the user's response! After the user
@@ -256,19 +256,58 @@ public class EmailPasswordAuthentication extends Progress implements
                 //Prompt the user once explanation has been shown
                 //(just doing it here for now, note that with this code, no explanation is shown)
                 ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
 
 
             } else {
                 // No explanation needed, we can request the permission.
                 ActivityCompat.requestPermissions(this,
-                        new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
                         MY_PERMISSIONS_REQUEST_LOCATION);
             }
             return false;
         } else {
             return true;
+        }
+    }
+
+    /**
+     *
+     * @param requestCode
+     * start to see if user connected
+     * @param permissions
+     * permissions which are needed for the application
+     * @param grantResults
+     * if the user has granted access to sensors.
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_LOCATION: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // location-related task you need to do.
+                    if (ContextCompat.checkSelfPermission(this,
+                            Manifest.permission.ACCESS_FINE_LOCATION)
+                            == PackageManager.PERMISSION_GRANTED) {
+                    }
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                    checkLocationPermission();
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
     }
 
