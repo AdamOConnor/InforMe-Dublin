@@ -21,5 +21,6 @@ Android, Google-Maps, Geofences, Firebase, Firebase storage, Firebase Database, 
 
 Well, Getting user's location has been completed, Information section which will be loaded dynamically for each page has been completted, So .... Firebase database loading json from selected key words and loaded upon request for information on the area, aswell as url of images loaded which have been stored upon firebase storage. Authentication from user to access the application as well as holding sign in from user, with Google Auth2 sign in completed, progress bar for each item which needs to be loaded. Preferences such as setting notification sound when entered geofence. Viewing user's comments as well as creating a registration page.
 
-
-
+<p align="center">
+  [![InforMe@Dublin](https://github.com/AdamOConnor/InforMe-Dublin/blob/master/ScreenShots/link.png)](https://www.youtube.com/watch?v=QaTIYzf6yFE "InforMe@Dublin - Click to Watch!")
+</p>
