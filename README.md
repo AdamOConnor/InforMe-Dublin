@@ -4,7 +4,7 @@ Android Application on Hisorical place's in different suburbs of dublin. This pr
 BSC(Hons) in computing in Information Technology from the Institute of Technology Blanchardstown.
 
 <p align="center">
-  <img src=https://github.com/AdamOConnor/InforMe-Dublin/blob/master/InforMe%40Dublin/app/src/main/res/drawable-hdpi/informe_dublin_transparent.png/>
+  <img src=https://github.com/AdamOConnor/InforMe-Dublin/blob/master/InforMe%40Dublin/app/src/main/res/drawable-hdpi/informe_dublin_transparent.png height=300 width= 300/>
 </p>
 
 # Reason For choosing such a project ?
