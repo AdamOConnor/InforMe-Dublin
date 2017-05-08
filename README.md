@@ -3,7 +3,9 @@
 Android Application on Hisorical place's in different suburbs of dublin. This project is intended for the purposes of obtaining a
 BSC(Hons) in computing in Information Technology from the Institute of Technology Blanchardstown.
 
-![alt text](https://github.com/AdamOConnor/InforMe-Dublin/blob/master/InforMe%40Dublin/app/src/main/res/drawable-hdpi/informe_logo.png)
+<p align="center">
+  <img src=https://github.com/AdamOConnor/InforMe-Dublin/blob/master/InforMe%40Dublin/app/src/main/res/drawable-hdpi/informe_dublin_transparent.png/>
+</p>
 
 # Reason For choosing such a project ?
 
