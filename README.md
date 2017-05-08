@@ -23,7 +23,7 @@ Well, Getting user's location has been completed, Information section which will
 
 <p align="center">
 
- <a href="https://www.youtube.com/watch?v=QaTIYzf6yFE"><img src="https://github.com/AdamOConnor/InforMe-Dublin/blob/master/ScreenShots/link.png"><\a>
+ <a href="https://www.youtube.com/watch?v=QaTIYzf6yFE"><img src="https://github.com/AdamOConnor/InforMe-Dublin/blob/master/ScreenShots/link.png">
  
 </p>
 
